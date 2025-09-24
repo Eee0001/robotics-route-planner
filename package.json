@@ -1,0 +1,22 @@
+{
+  "name": "robotics-route-planner",
+  "version": "1.0.0",
+  "description": "Route planner is a tool that helps with planning robot routes for a variety of robotics challenges.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eee0001/robotics-route-planner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eee0001/robotics-route-planner/issues"
+  },
+  "homepage": "https://github.com/Eee0001/robotics-route-planner#readme"
+}
