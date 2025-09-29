@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/Eee0001/robotics-route-planner/issues"
   },
-  "homepage": "https://github.com/Eee0001/robotics-route-planner#readme"
+  "homepage": "https://github.com/Eee0001/robotics-route-planner#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
