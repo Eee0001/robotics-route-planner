@@ -4,8 +4,9 @@
   "description": "Route planner is a tool that helps with planning robot routes for a variety of robotics challenges.",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
+    "build": "esbuild src/main.js --bundle --outfile=public/js/main.js",
+    "start": "npm run build && node server.js",
+    "dev": "npm run build && node server.js",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "repository": {
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/Eee0001/robotics-route-planner#readme",
   "dependencies": {
+    "esbuild": "^0.25.10",
     "express": "^5.1.0"
   }
 }
