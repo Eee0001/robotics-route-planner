@@ -1,4 +1,21 @@
 (() => {
+  // src/math.js
+  function RadToDeg(angle) {
+    return angle * 180 / Math.PI;
+  }
+  function CalculateDistance(p1, p2) {
+    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+  }
+  function CalculateAngle(p1, p2) {
+    return RadToDeg(Math.atan2(p2.x - p1.x, p1.y - p2.y));
+  }
+  function FlipAngle(angle) {
+    return -1 * Math.sign(angle) * (180 - Math.abs(angle));
+  }
+  function CalculateTurn(angle1, angle2) {
+    return Math.sign((angle2 - angle1 + 540) % 360 - 180);
+  }
+
   // src/main.js
   var canvas = document.getElementById("canvas");
   var ctx = canvas.getContext("2d");
@@ -20,21 +37,6 @@
     canvas.height = baseHeight * scale;
     ctx.scale(scale, scale);
     ctx.drawImage(background, 0, 0, baseWidth, baseHeight);
-  }
-  function RadToDeg(angle) {
-    return angle * 180 / Math.PI;
-  }
-  function CalculateDistance(p1, p2) {
-    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
-  }
-  function CalculateAngle(p1, p2) {
-    return RadToDeg(Math.atan2(p2.x - p1.x, p1.y - p2.y));
-  }
-  function FlipAngle(angle) {
-    return -1 * Math.sign(angle) * (180 - Math.abs(angle));
-  }
-  function CalculateTurn(angle1, angle2) {
-    return Math.sign((angle2 - angle1 + 540) % 360 - 180);
   }
   var currentPoint = null;
   var holdingPoint = null;
