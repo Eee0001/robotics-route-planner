@@ -16,31 +16,7 @@
     return Math.sign((angle2 - angle1 + 540) % 360 - 180);
   }
 
-  // src/main.js
-  var canvas = document.getElementById("canvas");
-  var ctx = canvas.getContext("2d");
-  var background = document.createElement("img");
-  background.src = "mission.png";
-  var container = document.getElementById("viewport");
-  var baseWidth = 2362;
-  var baseHeight = 1143;
-  var scale = 1;
-  function ResizeCanvas() {
-    let widthRatio = container.clientWidth / baseWidth;
-    let heightRatio = container.clientHeight / baseHeight;
-    if (widthRatio <= heightRatio) {
-      scale = widthRatio * 0.9;
-    } else {
-      scale = heightRatio * 0.9;
-    }
-    canvas.width = baseWidth * scale;
-    canvas.height = baseHeight * scale;
-    ctx.scale(scale, scale);
-    ctx.drawImage(background, 0, 0, baseWidth, baseHeight);
-  }
-  var currentPoint = null;
-  var holdingPoint = null;
-  var points = [];
+  // src/points.js
   function CreatePoint(x, y, d = 1, f = 0) {
     points.push({
       x,
@@ -50,7 +26,6 @@
     });
     currentPoint = points.length - 1;
   }
-  var trash = [];
   function DeletePoint() {
     if (points.length > 0) {
       trash.push(points.pop());
@@ -115,6 +90,33 @@
       UpdatePointMenu();
     }
   }
+
+  // src/main.js
+  window.currentPoint = null;
+  window.holdingPoint = null;
+  window.points = [];
+  window.trash = [];
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  var background = document.createElement("img");
+  background.src = "mission.png";
+  var container = document.getElementById("viewport");
+  var baseWidth = 2362;
+  var baseHeight = 1143;
+  var scale = 1;
+  function ResizeCanvas() {
+    let widthRatio = container.clientWidth / baseWidth;
+    let heightRatio = container.clientHeight / baseHeight;
+    if (widthRatio <= heightRatio) {
+      scale = widthRatio * 0.9;
+    } else {
+      scale = heightRatio * 0.9;
+    }
+    canvas.width = baseWidth * scale;
+    canvas.height = baseHeight * scale;
+    ctx.scale(scale, scale);
+    ctx.drawImage(background, 0, 0, baseWidth, baseHeight);
+  }
   var mouse = {
     x: 0,
     y: 0
@@ -125,7 +127,7 @@
     if (holdingPoint !== null) {
       points[holdingPoint].x = mouse.x;
       points[holdingPoint].y = mouse.y;
-      UpdatePointMenu();
+      UpdatePointMenu2();
     }
   };
   canvas.onmousedown = function(e) {
@@ -133,14 +135,14 @@
       if (CalculateDistance(point, mouse) <= 25) {
         holdingPoint = points.indexOf(point);
         currentPoint = points.indexOf(point);
-        UpdatePointMenu();
+        UpdatePointMenu2();
       }
     }
     if (holdingPoint === null) {
       CreatePoint(mouse.x, mouse.y);
       holdingPoint = points.length - 1;
       currentPoint = points.length - 1;
-      UpdatePointMenu();
+      UpdatePointMenu2();
     }
   };
   document.onmouseup = function(e) {
@@ -243,7 +245,7 @@
       points[currentPoint].f = menu.pointF.valueAsNumber;
     }
   };
-  function UpdatePointMenu() {
+  function UpdatePointMenu2() {
     if (currentPoint != null) {
       menu.pointX.value = points[currentPoint].x;
       menu.pointY.value = points[currentPoint].y;

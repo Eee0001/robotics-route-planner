@@ -4,6 +4,17 @@
 import { RadToDeg, DegToRad, CalculateDistance, CalculateAngle, FlipAngle, CalculateTurn } from "./math.js"
 
 //------------------------------------------------------------
+// POINTS
+//------------------------------------------------------------
+window.currentPoint = null;
+window.holdingPoint = null;
+
+window.points = [];
+window.trash = [];
+
+import { CreatePoint, DeletePoint, WipePoints, RestorePoint, MovePointLeft, MovePointRight, MovePointUp, MovePointDown, SetPointForwards, SetPointBackwards, SetPointFunction } from "./points.js"
+
+//------------------------------------------------------------
 // CANVAS
 //------------------------------------------------------------
 const canvas = document.getElementById("canvas");
@@ -36,102 +47,6 @@ function ResizeCanvas () {
 
   ctx.scale(scale, scale);
   ctx.drawImage(background, 0, 0, baseWidth, baseHeight);
-}
-
-//------------------------------------------------------------
-// POINTS
-//------------------------------------------------------------
-let currentPoint = null;
-let holdingPoint = null;
-
-let points = [];
-
-function CreatePoint (x, y, d = 1, f = 0) {
-  points.push({
-    x: x,
-    y: y,
-    d: d,
-    f: f,
-  });
-  currentPoint = points.length - 1;
-}
-
-let trash = [];
-
-function DeletePoint () {
-  if (points.length > 0) {
-    trash.push(points.pop());
-  }
-
-  if (holdingPoint >= points.length) {
-    holdingPoint = null;
-  }
-  if (currentPoint >= points.length) {
-    currentPoint = null;
-  }
-
-  UpdatePointMenu();
-}
-
-function WipePoints () {
-  points = [];
-  currentPoint = null;
-  holdingPoint = null;
-}
-
-function RestorePoint () {
-  if (trash.length > 0) {
-    points.push(trash.pop());
-  }
-}
-
-function MovePointLeft () {
-  if (currentPoint != null) {
-    points[currentPoint].x -= 1;
-    UpdatePointMenu();
-  }
-}
-
-function MovePointRight () {
-  if (currentPoint != null) {
-    points[currentPoint].x += 1;
-    UpdatePointMenu();
-  }
-}
-
-function MovePointUp () {
-  if (currentPoint != null) {
-    points[currentPoint].y -= 1;
-    UpdatePointMenu();
-  }
-}
-
-function MovePointDown () {
-  if (currentPoint != null) {
-    points[currentPoint].y += 1;
-    UpdatePointMenu();
-  }
-}
-
-function SetPointForwards () {
-  if (currentPoint != null) {
-    points[currentPoint].d = 1;
-    UpdatePointMenu();
-  }
-}
-
-function SetPointBackwards () {
-  if (currentPoint != null) {
-    points[currentPoint].d = -1;
-    UpdatePointMenu();
-  }
-}
-
-function SetPointFunction (key) {
-  if (currentPoint != null) {
-    points[currentPoint].f = Number(key);
-    UpdatePointMenu();
-  }
 }
 
 //------------------------------------------------------------
