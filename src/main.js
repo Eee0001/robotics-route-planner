@@ -1,57 +1,32 @@
 //------------------------------------------------------------
-// MATH
+// IMPORTS
 //------------------------------------------------------------
-import { RadToDeg, DegToRad, CalculateDistance, CalculateAngle, FlipAngle, CalculateTurn } from "./math.js"
+import { CalculateDistance, CalculateAngle, FlipAngle, CalculateTurn } from "./math.js"
+import { Canvas } from "./canvas.js"
+import { Menu } from "./menu.js"
+import { Route } from "./routes.js"
+import { ExportPoints } from "./export.js"
 
 //------------------------------------------------------------
-// POINTS
+// GLOBALS
 //------------------------------------------------------------
-window.currentPoint = null;
-window.holdingPoint = null;
-
-window.points = [];
-window.trash = [];
-
-import { CreatePoint, DeletePoint, WipePoints, RestorePoint, MovePointLeft, MovePointRight, MovePointUp, MovePointDown, SetPointForwards, SetPointBackwards, SetPointFunction } from "./points.js"
-
-//------------------------------------------------------------
-// EXPORT
-//------------------------------------------------------------
-import { ExportRoute, DownloadRoute, CopyRoute, ExportPoints, DownloadPoints, CopyPoints,  } from "./export.js"
-
-//------------------------------------------------------------
-// CANVAS
-//------------------------------------------------------------
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-const background = document.createElement("img");
-background.src = "mission.png";
+window.robotWidth = 200;
+window.showOverlay = false;
+window.showInfo = true;
 
 const container = document.getElementById("viewport");
+const canvas = new Canvas(container);
+const menu = new Menu();
+const route = new Route(menu);
 
-// Scale is 1mm per px
-let baseWidth = 2362;
-let baseHeight = 1143;
+function toggleShowOverlay () {
+  window.showOverlay = !window.showOverlay;
+  menu.updateSettings();
+}
 
-let scale = 1;
-
-function ResizeCanvas () {
-  let widthRatio = container.clientWidth / baseWidth;
-  let heightRatio = container.clientHeight / baseHeight;
-
-  if (widthRatio <= heightRatio) {
-    scale = widthRatio * 0.9;
-  } 
-  else {
-    scale = heightRatio *0.9;
-  }
-
-  canvas.width = baseWidth * scale;
-  canvas.height = baseHeight * scale;
-
-  ctx.scale(scale, scale);
-  ctx.drawImage(background, 0, 0, baseWidth, baseHeight);
+function toggleShowInfo () {
+  window.showInfo = !window.showInfo;
+  menu.updateSettings();
 }
 
 //------------------------------------------------------------
@@ -62,40 +37,40 @@ const mouse = {
   y: 0,
 }
 
-canvas.onmousemove = function (e) {
-  mouse.x = Math.round(e.offsetX / scale);
-  mouse.y = Math.round(e.offsetY / scale);
+canvas.element.onmousemove = function (e) {
+  mouse.x = Math.round(e.offsetX / canvas.scale);
+  mouse.y = Math.round(e.offsetY / canvas.scale);
 
-  if (holdingPoint !== null) {
-    points[holdingPoint].x = mouse.x;
-    points[holdingPoint].y = mouse.y;
+  if (route.holdingPoint !== null) {
+    route.points[route.holdingPoint].x = mouse.x;
+    route.points[route.holdingPoint].y = mouse.y;
     
-    UpdatePointMenu();
+    menu.updatePoints(route);
   }
 }
 
-canvas.onmousedown = function (e) {
-  for (point of points) {
+canvas.element.onmousedown = function (e) {
+  for (point of route.points) {
     if (CalculateDistance(point,mouse) <= 25) {
-      holdingPoint = points.indexOf(point);
-      currentPoint = points.indexOf(point);
+      route.holdingPoint = route.points.indexOf(point);
+      route.currentPoint = route.points.indexOf(point);
 
-      UpdatePointMenu();
+      menu.updatePoints(route);
     }
   }
 
-  if (holdingPoint === null) {
-    CreatePoint(mouse.x, mouse.y);
+  if (route.holdingPoint === null) {
+    route.createPoint(mouse.x, mouse.y);
     
-    holdingPoint = points.length - 1;
-    currentPoint = points.length - 1;
+    route.holdingPoint = route.points.length - 1;
+    route.currentPoint = route.points.length - 1;
 
-    UpdatePointMenu();
+    menu.updatePoints(route);
   }
 }
 
 document.onmouseup = function (e) {
-  holdingPoint = null;
+  route.holdingPoint = null;
 }
 
 //------------------------------------------------------------
@@ -104,205 +79,50 @@ document.onmouseup = function (e) {
 container.onkeyup = function (e) {
   let key = e.key;
 
-  if (key === "Backspace") { DeletePoint(); }
-  if (key === "Enter") { RestorePoint(); }
-  if (key === "-") { SetPointBackwards(); }
-  if (key === "=") { SetPointForwards(); }
-  if (!isNaN(key)) { SetPointFunction(key); }
-  if (key === "o") { ToggleShowOverlay(); }
-  if (key === "i") { ToggleShowInfo(); }
+  if (key === "Backspace") { route.deletePoint(); }
+  if (key === "Enter") { route.restorePoint(); }
+  if (key === "-") { route.setPointDirection(-1); }
+  if (key === "=") { route.setPointDirection(1); }
+  if (!isNaN(key)) { route.setPointFunction(key); }
+  if (key === "o") { toggleShowOverlay(); }
+  if (key === "i") { toggleShowInfo(); }
   if (key === "p") { LoadPreviousSavedPoints(); }
-  if (key === "q") { WipePoints(); }
+  if (key === "q") { route.wipePoints(); }
 }
 
 container.onkeydown = function (e) {
   let key = e.key;
 
-  if (key === "ArrowLeft") { MovePointLeft(); }
-  if (key === "ArrowRight") { MovePointRight(); }
-  if (key === "ArrowUp") { MovePointUp(); }
-  if (key === "ArrowDown") { MovePointDown(); }
-}
-
-//------------------------------------------------------------
-// MENU
-//------------------------------------------------------------
-
-// Select html elements
-//------------------------------------------------------------
-window.menu = {
-  formPoints: document.getElementById("point"),
-  formSettings: document.getElementById("settings"),
-  
-  pointX : document.getElementById("PointX"),
-  pointY : document.getElementById("PointY"),
-  
-  pointDF : document.getElementById("F"),
-  pointDB : document.getElementById("B"),
-  
-  pointF : document.getElementById("PointF"),
-
-  robotW : document.getElementById("RobotW"),
-  overlay : document.getElementById("Overlay"),
-  info: document.getElementById("Info"),
-
-  routeD: document.getElementById("RouteD"),
-  routeL: document.getElementById("RouteL"),
-  routeC: document.getElementById("RouteC"),
-
-  pointsD: document.getElementById("PointsD"),
-  pointsL: document.getElementById("PointsL"),
-  pointsC: document.getElementById("PointsC"),
-  pointsT: document.getElementById("PointsT"),
-  pointsI: document.getElementById("PointsI"),
-  pointsF: document.getElementById("PointsF"),
-};
-
-// Prevent form submit
-//------------------------------------------------------------
-menu.formPoints.onsubmit = (e) => {e.preventDefault();};
-menu.formSettings.onsubmit = (e) => {e.preventDefault();};
-
-// Selected point menu onchange events
-//------------------------------------------------------------
-menu.pointX.onchange = function () {
-  if (currentPoint != null) {
-    points[currentPoint].x = menu.pointX.valueAsNumber;
-  }
-}
-menu.pointY.onchange = function () {
-  if (currentPoint != null) {
-    points[currentPoint].y = menu.pointY.valueAsNumber;
-  }
-}
-menu.pointDF.onchange = function () {
-  if (currentPoint != null) {
-    points[currentPoint].d = 1;
-  }
-}
-menu.pointDB.onchange = function () {
-  if (currentPoint != null) {
-    points[currentPoint].d = -1;
-  }
-}
-menu.pointF.onchange = function () {
-  if (currentPoint != null) {
-    points[currentPoint].f = menu.pointF.valueAsNumber;
-  }
-}
-
-// Update point menu
-//------------------------------------------------------------
-function UpdatePointMenu () {
-  if (currentPoint != null) {
-    menu.pointX.value = points[currentPoint].x;
-    menu.pointY.value = points[currentPoint].y;
-
-    if (points[currentPoint].d === 1) {
-      menu.pointDF.checked = true;
-    }
-    if (points[currentPoint].d === -1) {
-      menu.pointDB.checked = true;
-    }
-
-    menu.pointF.value = points[currentPoint].f;
-  }
-  else if (currentPoint === null) {
-    menu.pointX.value = "";
-    menu.pointY.value = "";
-    
-    menu.pointDF.checked = false;
-    menu.pointDB.checked = false;
-    
-    menu.pointF.value = "";
-  }
-}
-
-// Settings menu onchange events
-//------------------------------------------------------------
-let robotWidth = 200;
-let showOverlay = false;
-let showInfo = true;
-
-menu.robotW.onchange = function () {
-  robotWidth = menu.robotW.valueAsNumber;
-}
-
-menu.overlay.onchange = function () {
-  showOverlay = menu.overlay.checked;
-}
-
-menu.info.onchange = function () {
-  showInfo = menu.info.checked;
-}
-
-function ToggleShowOverlay () {
-  showOverlay = !showOverlay;
-  UpdateSettingsMenu();
-}
-
-function ToggleShowInfo () {
-  showInfo = !showInfo;
-  UpdateSettingsMenu();
-}
-
-// Update settings menu
-//------------------------------------------------------------
-function UpdateSettingsMenu () {
-  menu.robotW.value = robotWidth;
-  menu.overlay.checked = showOverlay;
-  menu.info.checked = showInfo;
-}
-
-// Export/Import menu onchange events
-//------------------------------------------------------------
-menu.routeD.onclick = function () {
-  DownloadRoute();
-}
-menu.routeC.onclick = function () {
-  CopyRoute();
-}
-
-menu.pointsD.onclick = function () {
-  DownloadPoints();
-}
-menu.pointsC.onclick = function () {
-  CopyPoints();
-}
-menu.pointsT.onchange = function () {
-  ImportPointsFromText();
-}
-menu.pointsI.onclick = function () {
-  UploadPointsFile();
-}
-menu.pointsF.onchange = function () {
-  ImportPointsFromFile();
+  if (key === "ArrowLeft") { route.movePoint("left"); }
+  if (key === "ArrowRight") { route.movePoint("right"); }
+  if (key === "ArrowUp") { route.movePoint("up"); }
+  if (key === "ArrowDown") { route.movePoint("down"); }
 }
 
 //------------------------------------------------------------
 // IMPORT
 //------------------------------------------------------------
-function ImportPointsFromText () {
+export function ImportPointsFromText () {
 
   try {
-    json = JSON.parse(menu.pointsT.value);
+    json = JSON.parse(menu.elements.pointsT.value);
 
-    currentPoint = null;
-    holdingPoint = null;
+    route.currentPoint = null;
+    route.holdingPoint = null;
   }
   catch {
     json = null;
   }
 
-  points = json !== null ? json : points;
+  route.points = json !== null ? json : route.points;
   
 }
 
-function UploadPointsFile () {
-  menu.pointsF.click();
+export function UploadPointsFile () {
+  menu.elements.pointsF.click();
 }
 
-function ImportPointsFromFile () {
+export function ImportPointsFromFile () {
   let fileReader = new FileReader();
   
   fileReader.onload = () => {
@@ -310,25 +130,25 @@ function ImportPointsFromFile () {
     try {
       json = JSON.parse(fileReader.result);
 
-      currentPoint = null;
-      holdingPoint = null;
+      route.currentPoint = null;
+      route.holdingPoint = null;
     }
     catch {
       json = null;
     }
 
-    points = json !== null ? json : points;
+    route.points = json !== null ? json : route.points;
     
   };
 
-  fileReader.readAsText(menu.pointsF.files[0]);
+  fileReader.readAsText(menu.elements.pointsF.files[0]);
 }
 
 //------------------------------------------------------------
 // SAVE
 //------------------------------------------------------------
 function SavePoints () {
-  localStorage.setItem("Save",ExportPoints());
+  localStorage.setItem("Save",ExportPoints(route.points));
 }
 
 window.onbeforeunload = function () {
@@ -340,67 +160,41 @@ function LoadPreviousSavedPoints () {
   try {
     json = JSON.parse(localStorage.getItem("Save"));
 
-    currentPoint = null;
-    holdingPoint = null;
+    route.currentPoint = null;
+    route.holdingPoint = null;
   }
   catch {
     json = null;
   }
 
-  points = json !== null ? json : points;
+  route.points = json !== null ? json : route.points;
 }
 
 //------------------------------------------------------------
 // DRAW
 //------------------------------------------------------------
 function DrawPoints () {
-  for (point of points) {
-    ctx.beginPath();
-    ctx.fillStyle = "rgb(0,0,0)";
-    ctx.arc(point.x, point.y, 10, 0, 2*Math.PI);
-    ctx.fill();
+  for (point of route.points) {
+    canvas.drawPoint(point.x, point.y, 10, "rgb(0,0,0)");
   }
 
-  if (currentPoint !== null) {
-    let point = points[currentPoint];
-    ctx.beginPath();
-    ctx.strokeStyle = "rgb(0,0,0)";
-    ctx.lineWidth = 3;
-    ctx.arc(point.x, point.y, 20, 0, 2*Math.PI);
-    ctx.stroke();
+  if (route.currentPoint !== null) {
+    let point = route.points[route.currentPoint];
+    canvas.drawPoint(point.x, point.y, 20, "rgb(0,0,0)", "stroke");
   }
-}
-
-function DrawLines () {
-  ctx.beginPath();
-  
-  for (point of points) {
-    ctx.strokeStyle = "rgb(0,0,0)";
-    ctx.lineWidth = 3;
-    ctx.lineTo(point.x, point.y);
-  }
-  
-  ctx.stroke();
 }
 
 function DrawOverlay () {
-  if (showOverlay) {
-    ctx.beginPath();
-  
-    for (point of points) {
-      ctx.strokeStyle = "rgba(0,0,0,0.5)";
-      ctx.lineWidth = robotWidth;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.lineTo(point.x, point.y);
-    }
-    
-    ctx.stroke();
+  if (window.showOverlay) {
+    canvas.drawLine(route.points, "rgb(0,0,0,0.5)", robotWidth);
   }
 }
 
 function DrawInfo () {
-  if (showInfo) {
+  if (window.showInfo) {
+    ctx = canvas.ctx;
+    points = route.points;
+    
     for(let i = 0; i < points.length; i++) {
       ctx.beginPath();
       ctx.font = "bold 36px sans";
@@ -449,15 +243,15 @@ function DrawInfo () {
 // LOOP
 //------------------------------------------------------------
 function loop () {
-  ResizeCanvas();
+  canvas.resize();
 
   DrawPoints();
-  DrawLines();
+  canvas.drawLine(route.points, "rgb(0,0,0)");
   DrawOverlay();
   DrawInfo();
 }
 
 document.body.onload = function () {
-  UpdateSettingsMenu();
+  menu.updateSettings();
   setInterval(loop, 1000/60);
 }
