@@ -1,11 +1,11 @@
 //------------------------------------------------------------
 // EXPORTS
 //------------------------------------------------------------
-import { RadToDeg, DegToRad, CalculateDistance, CalculateAngle, FlipAngle, CalculateTurn } from "./math.js"
+import { CalculateDistance, CalculateAngle, FlipAngle, CalculateTurn } from "./math.js"
 
 // Export route
 //------------------------------------------------------------
-export function ExportRoute () {
+function ExportRoute (points) {
   let route = ``;
   
   for(let i = 0; i < (points.length - 1); i++) {
@@ -29,36 +29,46 @@ export function ExportRoute () {
   return route.trim();
 }
 
-export function DownloadRoute () {
-  let data = ExportRoute();
+export function DownloadRoute (points) {
+  let data = ExportRoute(points);
   let blob = new Blob([data], { type: 'text.plain' });
   let url = URL.createObjectURL(blob);
 
-  menu.routeL.href = url;
+  let element = document.createElement("a");
+  element.setAttribute("download", "Robot-Route");
+  
+  element.href = url;
 
-  menu.routeL.click();
+  element.click();
+
+  element.remove();
 }
 
-export function CopyRoute () {
-  navigator.clipboard.writeText(ExportRoute());
+export function CopyRoute (points) {
+  navigator.clipboard.writeText(ExportRoute(points));
 }
 
 // Export points
 //------------------------------------------------------------
-export function ExportPoints () {
+export function ExportPoints (points) {
   return JSON.stringify(points);
 }
 
-export function DownloadPoints () {
-  let data = ExportPoints();
+export function DownloadPoints (points) {
+  let data = ExportPoints(points);
   let blob = new Blob([data], { type: 'application/json' });
   let url = URL.createObjectURL(blob);
 
-  menu.pointsL.href = url;
+  let element = document.createElement("a");
+  element.setAttribute("download", "Points");
+  
+  element.href = url;
 
-  menu.pointsL.click();
+  element.click();
+
+  element.remove();
 }
 
-export function CopyPoints () {
-  navigator.clipboard.writeText(ExportPoints());
+export function CopyPoints (points) {
+  navigator.clipboard.writeText(ExportPoints(points));
 }
