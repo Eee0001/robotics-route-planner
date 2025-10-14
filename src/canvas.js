@@ -33,13 +33,17 @@ export class Canvas {
     this.drawImage(this.map, 0, 0, this.baseWidth, this.baseHeight);
   }
 
+  getScale () {
+    return this.scale;
+  }
+
   drawPoint (x, y, r, color, type = "fill") {
     this.ctx.beginPath();
     
     this.ctx.fillStyle = color;
     this.ctx.strokeStyle = color;
     
-    this.ctx.arc(x, y, 10, 0, 2*Math.PI);
+    this.ctx.arc(x, y, r, 0, 2*Math.PI);
     
     if (type === "fill") {
       this.ctx.fill();
@@ -50,11 +54,13 @@ export class Canvas {
     }
   }
 
-  drawtext (x, y, text, color) {
+  drawText (text, x, y, color = "rgb(0,0,0)") {
     this.ctx.beginPath();
     
     this.ctx.font = "bold 36px sans";
     this.ctx.textAlign = "center";
+
+    this.ctx.fillStyle = color;
     
     this.ctx.fillText(text, x, y);
     
