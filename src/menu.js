@@ -1,11 +1,11 @@
-import { DownloadRoute, CopyRoute, DownloadPoints, CopyPoints } from "./export.js"
-import { ImportPointsFromText, UploadPointsFile, ImportPointsFromFile } from "./main.js"
+import { downloadRoute, copyRoute, downloadPoints, copyPoints } from "./export.js"
+import { getCurrentRoute } from "./routes.js"
 
 export class Menu {
   constructor (route) {
     this.elements = {
-      formPoints: document.getElementById("point"),
-      formSettings: document.getElementById("settings"),
+      formPoints : document.getElementById("point"),
+      formSettings : document.getElementById("settings"),
       
       pointX : document.getElementById("PointX"),
       pointY : document.getElementById("PointY"),
@@ -17,124 +17,205 @@ export class Menu {
     
       robotW : document.getElementById("RobotW"),
       overlay : document.getElementById("Overlay"),
-      info: document.getElementById("Info"),
+      info : document.getElementById("Info"),
     
-      routeD: document.getElementById("RouteD"),
-      routeL: document.getElementById("RouteL"),
-      routeC: document.getElementById("RouteC"),
+      routeD : document.getElementById("RouteD"),
+      routeL : document.getElementById("RouteL"),
+      routeC : document.getElementById("RouteC"),
     
-      pointsD: document.getElementById("PointsD"),
-      pointsL: document.getElementById("PointsL"),
-      pointsC: document.getElementById("PointsC"),
-      pointsT: document.getElementById("PointsT"),
-      pointsI: document.getElementById("PointsI"),
-      pointsF: document.getElementById("PointsF"),
+      pointsD : document.getElementById("PointsD"),
+      pointsL : document.getElementById("PointsL"),
+      pointsC : document.getElementById("PointsC"),
+      pointsT : document.getElementById("PointsT"),
+      pointsI : document.getElementById("PointsI"),
+      pointsF : document.getElementById("PointsF")
     };
 
-    this.route = null;
+    this.settings = {
+      robotWidth : 200,
+      showOverlay : false,
+      showInfo : true
+    };
+
+    this.elements.overlay.checked = this.settings.showOverlay;
+    this.elements.info.checked = this.settings.showInfo;
 
     this.elements.formPoints.onsubmit = (e) => {e.preventDefault();};
     this.elements.formSettings.onsubmit = (e) => {e.preventDefault();};
   }
 
-  updateEvents () {    
-    let this2 = this;
-    
-    this.elements.pointX.onchange = function () {
-      if (this2.route.currentPoint != null) {
-        this2.route.points[this2.route.currentPoint].x = this2.elements.pointX.valueAsNumber;
-      }
-    }
-    this.elements.pointY.onchange = function () {
-      if (this2.route.currentPoint != null) {
-        this2.route.points[this2.route.currentPoint].y = this2.elements.pointY.valueAsNumber;
-      }
-    }
-    this.elements.pointDF.onchange = function () {
-      if (this2.route.currentPoint != null) {
-        this2.route.points[this2.route.currentPoint].d = 1;
-      }
-    }
-    this.elements.pointDB.onchange = function () {
-      if (this2.route.currentPoint != null) {
-        this2.route.points[this2.route.currentPoint].d = -1;
-      }
-    }
-    this.elements.pointF.onchange = function () {
-      if (this2.route.currentPoint != null) {
-        this2.route.points[this2.route.currentPoint].f = this2.elements.pointF.valueAsNumber;
-      }
-    }
-
-    this.elements.robotW.onchange = function () {
-      window.robotWidth = this2.elements.robotW.valueAsNumber;
-    }
-    
-    this.elements.overlay.onchange = function () {
-      window.showOverlay = this2.elements.overlay.checked;
-    }
-    
-    this.elements.info.onchange = function () {
-      window.showInfo = this2.elements.info.checked;
-    }
-
-    this.elements.routeD.onclick = function () {
-      DownloadRoute(this2.route.points);
-    }
-    this.elements.routeC.onclick = function () {
-      CopyRoute(this2.route.points);
-    }
-    
-    this.elements.pointsD.onclick = function () {
-      DownloadPoints(this2.route.points);
-    }
-    this.elements.pointsC.onclick = function () {
-      CopyPoints(this2.route.points);
-    }
-    
-    this.elements.pointsT.onchange = function () {
-      ImportPointsFromText();
-    }
-    this.elements.pointsI.onclick = function () {
-      UploadPointsFile();
-    }
-    this.elements.pointsF.onchange = function () {
-      ImportPointsFromFile();
-    }
+  getPointX () {
+    return this.elements.pointX.valueAsNumber;
   }
 
-  updatePoints (route) {
-    this.route = route;
-    this.updateEvents();
+  getPointY () {
+    return this.elements.pointX.valueAsNumber;
+  }
+
+  getPointD () {
+    return this.elements.pointDF.checked === true ? 1 : -1;
+  }
+
+  getPointF () {
+    return this.elements.pointF.valueAsNumber;
+  }
+
+  getRobotW () {
+    return this.elements.robotW.valueAsNumber;
+  }
+
+  getOverlay () {
+    return this.elements.overlay.checked;
+  }
+
+  toggleOverlay () {
+    this.settings.showOverlay = !this.settings.showOverlay;
     
-    if (this.route.currentPoint != null) {
-      this.elements.pointX.value = this.route.points[this.route.currentPoint].x;
-      this.elements.pointY.value = this.route.points[this.route.currentPoint].y;
+    this.elements.overlay.checked = this.settings.showOverlay;
+  }
+
+  getInfo () {
+    return this.elements.info.checked;
+  }
+
+  toggleInfo () {
+    this.settings.showInfo = !this.settings.showInfo;
+    
+    this.elements.info.checked = this.settings.showInfo;
+  }
+
+  getPointsFromText (route) {
+    let json = null;
+    
+    try {
+      json = JSON.parse(this.elements.pointsT.value);
   
-      if (this.route.points[this.route.currentPoint].d === 1) {
-        this.elements.pointDF.checked = true;
+      route.setCurrentPoint(null);
+      route.setHoldingPoint(null);
+    }
+    catch {
+      json = null;
+    }
+  
+    route.setPoints(json !== null ? json : route.getPoints());
+
+    this.updatePoints(route);
+  }
+
+  getPointsFromFile (route) {
+    let fileReader = new FileReader();
+    
+    const this2 = this;
+    
+    fileReader.onload = () => {
+
+      let json = null;
+  
+      try {
+        json = JSON.parse(fileReader.result);
+  
+        route.setCurrentPoint(null);
+        route.setHoldingPoint(null);
       }
-      if (this.route.points[this.route.currentPoint].d === -1) {
-        this.elements.pointDB.checked = true;
+      catch {
+        json = null;
       }
   
-      this.elements.pointF.value = this.route.points[this.route.currentPoint].f;
-    }
-    else if (this.route.currentPoint === null) {
-      this.elements.pointX.value = "";
-      this.elements.pointY.value = "";
-      
-      this.elements.pointDF.checked = false;
-      this.elements.pointDB.checked = false;
-      
-      this.elements.pointF.value = "";
-    }
+      route.setPoints(json !== null ? json : route.getPoints());
+
+      this2.updatePoints(route);
+    };
+  
+    fileReader.readAsText(this.elements.pointsF.files[0]);
   }
 
   updateSettings () {
-    this.elements.robotW.value = robotWidth;
-    this.elements.overlay.checked = showOverlay;
-    this.elements.info.checked = showInfo;
+    this.settings.robotWidth = this.getRobotW();
+    this.settings.showOverlay = this.getOverlay();
+    this.settings.showInfo = this.getInfo();
   }
-  
+
+  updatePoints (route) {
+    this.elements.pointX.value = route.getPointX(route.getCurrentPoint());
+    this.elements.pointY.value = route.getPointY(route.getCurrentPoint());
+
+    if (route.getPointD(route.getCurrentPoint()) === 1) {
+      this.elements.pointDF.checked = true;
+    }
+    else if (route.getPointD(route.getCurrentPoint()) === -1) {
+      this.elements.pointDB.checked = true;
+    }
+    else {
+      this.elements.pointDF.checked = false;
+      this.elements.pointDB.checked = false;
+    }
+
+    this.elements.pointF.value = route.getPointF(route.getCurrentPoint());
+  }
+
+  updateEvents (route) {    
+    const this2 = this;
+
+    this.elements.pointX.onchange = () => {
+      route.setPointX(route.getCurrentPoint(), this2.getPointX());
+    };
+
+    this.elements.pointY.onchange = () => {
+      route.setPointY(route.getCurrentPoint(), this2.getPointY());
+    };
+    
+    this.elements.pointDF.onchange = () => {
+      route.setPointD(route.getCurrentPoint(), this2.getPointD());
+    };
+
+    this.elements.pointDB.onchange = () => {
+      route.setPointD(route.getCurrentPoint(), this2.getPointD());
+    };
+
+    this.elements.pointF.onchange = () => {
+      route.setPointF(route.getCurrentPoint(), this2.getPointF());
+    };
+
+    this.elements.robotW.onchange = () => {
+      this2.settings.robotWidth = this2.getRobotW();
+    };
+
+    this.elements.overlay.onchange = () => {
+      this2.settings.showOverlay = this2.getOverlay();
+    };
+    
+    this.elements.info.onchange = () => {
+      this2.settings.showInfo = this2.getInfo();
+    };
+
+    // exports and imports
+    this.elements.routeD.onclick = () => {
+      downloadRoute(route.getPoints());
+    }
+    this.elements.routeC.onclick = () => {
+      copyRoute(route.getPoints());
+    }
+    
+    this.elements.pointsD.onclick = () => {
+      downloadPoints(route.getPoints());
+    }
+    this.elements.pointsC.onclick = () => {
+      copyPoints(route.getPoints());
+    }
+    
+    this.elements.pointsT.onchange = () => {
+      this2.getPointsFromText(getCurrentRoute());
+    }
+    this.elements.pointsI.onclick = () => {
+      this.elements.pointsF.click();
+    }
+    this.elements.pointsF.onchange = () => {
+      this2.getPointsFromFile(getCurrentRoute());
+    }
+  }
+
+  selectRoute (route) {
+    this.updatePoints(route);
+    this.updateEvents(route);
+  }
 }

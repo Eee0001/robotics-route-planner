@@ -1,3 +1,19 @@
+//------------------------------------------------------------
+// Route manipulation functions
+//------------------------------------------------------------
+let currentRoute = null;
+
+export function setCurrentRoute (route) {
+  currentRoute = route;
+}
+
+export function getCurrentRoute () {
+  return currentRoute;
+}
+
+//------------------------------------------------------------
+// Route class
+//------------------------------------------------------------
 export class Route {
   constructor (menu) {
     
@@ -9,8 +25,7 @@ export class Route {
     this.currentPoint = null;
     this.holdingPoint = null;
 
-    this.menu = menu;
-    this.menu.updatePoints(this);
+    setCurrentRoute(this);
   }
 
   createPoint (x, y, d = 1, f = 0) {
@@ -33,9 +48,7 @@ export class Route {
     }
     if (this.currentPoint >= this.points.length) {
       this.currentPoint = null;
-    }
-  
-    this.menu.updatePoints(this);
+    }  
   }
 
   restorePoint () {
@@ -44,10 +57,16 @@ export class Route {
     }
   }
 
+  setPoints (points) {
+    this.points = points;
+    this.currentPoint = null;
+    this.holdingPoint = null;    
+  }
+
   wipePoints () {
     this.points = [];
     this.currentPoint = null;
-    this.holdingPoint = null;      
+    this.holdingPoint = null; 
   }
 
   movePoint (direction) {
@@ -64,21 +83,88 @@ export class Route {
       if (direction === "right") {
         this.points[this.currentPoint].x += 1;
       }
-      this.menu.updatePoints(this);
     }
   }
 
-  setPointDirection (d) {
-    if (this.currentPoint != null) {
-      this.points[this.currentPoint].d = d;
-      this.menu.updatePoints(this);
+  // Setter functions for points
+  setCurrentPoint (index) {
+    this.currentPoint = index;
+  }
+
+  setHoldingPoint (index) {
+    this.holdingPoint = index;
+  }
+  
+  setPointX (index, x) {
+    if (index !== null) {
+      this.points[index].x = x;
     }
   }
 
-  setPointFunction (f) {
-    if (this.currentPoint != null) {
-      this.points[this.currentPoint].f = Number(f);
-      this.menu.updatePoints(this);
+  setPointY (index, y) {
+    if (index !== null) {
+      this.points[index].y = y;
+    }
+  }
+
+  setPointD (index, d) {
+    if (index !== null) {
+      this.points[index].d = d;
+    }
+  }
+
+  setPointF (index, f) {
+    if (index !== null) {
+      this.points[index].f = Number(f);
+    }
+  }
+
+  // Getter functions for points
+  getCurrentPoint () {
+    return this.currentPoint;
+  }
+
+  getHoldingPoint () {
+    return this.holdingPoint;
+  }
+
+  getPoints () {
+    return this.points;
+  }
+  
+  getPointX (index) {
+    if (index !== null) {
+      return this.points[index].x;
+    }
+    else {
+      return null;
+    }
+  }
+
+  getPointY (index) {
+    if (index !== null) {
+      return this.points[index].y;
+    }
+    else {
+      return null;
+    }
+  }
+
+  getPointD (index) {
+    if (index !== null) {
+      return this.points[index].d;
+    }
+    else {
+      return null;
+    }
+  }
+
+  getPointF (index) {
+    if (index !== null) {
+      return this.points[index].f;
+    }
+    else {
+      return null;
     }
   }
 }

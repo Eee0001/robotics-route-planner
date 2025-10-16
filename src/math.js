@@ -1,23 +1,23 @@
-export function RadToDeg (angle) {
+export function radToDeg (angle) {
   return angle * 180 / Math.PI;
 }
 
-export function DegToRad (angle) {
+export function degToRad (angle) {
   return angle * Math.PI / 180;
 }
 
-export function CalculateDistance (p1, p2) {
+export function calculateDistance (p1, p2) {
   return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
 }
 
-export function CalculateAngle (p1, p2) {
-  return RadToDeg(Math.atan2((p2.x - p1.x), (p1.y - p2.y)));
+export function calculateAngle (p1, p2) {
+  return radToDeg(Math.atan2((p2.x - p1.x), (p1.y - p2.y)));
 }
 
-export function FlipAngle (angle) {
+export function flipAngle (angle) {
   return -1 * Math.sign(angle) * (180 - Math.abs(angle))
 }
 
-export function CalculateTurn (angle1, angle2) {
+export function calculateTurn (angle1, angle2) {
   return Math.sign((angle2 - angle1 + 540) % 360 - 180);
 }
