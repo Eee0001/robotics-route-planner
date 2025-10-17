@@ -1,6 +1,11 @@
-import config from 'eslint-config-xo';
+// import config from 'eslint-config-xo';
 import {defineConfig} from 'eslint/config';
 
 export default defineConfig([
-	config,
+	{
+		files: ["**/*.js"],
+		rules: {
+			"no-undef": 1,
+		},
+	}
 ]);
