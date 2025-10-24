@@ -620,6 +620,10 @@
   menu.selectRoute(route);
   initMouse(canvas, menu);
   initKeyboard(container, menu);
+  document.getElementById("button").addEventListener("click", () => {
+    document.getElementById("menu").classList.toggle("hiddenmenu");
+    canvas.resize();
+  });
   function loop() {
     canvas.resize();
     drawPoints(route, canvas);
