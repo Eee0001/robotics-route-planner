@@ -1,4 +1,4 @@
-/* global document */
+/* global document, setInterval */
 
 //------------------------------------------------------------
 // IMPORTS

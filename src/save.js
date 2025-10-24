@@ -1,3 +1,5 @@
+/* global window, localStorage*/
+
 import { exportPoints } from "./export.js"
 import { getCurrentRoute } from "./routes.js"
 
@@ -16,6 +18,8 @@ window.onbeforeunload = () => {
 // LOAD
 //------------------------------------------------------------
 export function LoadPreviousSavedPoints (route, menu) {
+
+  let json = null;
 
   try {
     json = JSON.parse(localStorage.getItem("Save"));
