@@ -1,4 +1,4 @@
-/* global document */
+/* global document, setInterval */
 
 //------------------------------------------------------------
 // IMPORTS
@@ -25,6 +25,13 @@ menu.selectRoute(route);
 
 initMouse(canvas, menu);
 initKeyboard(container, menu);
+
+// Hide Menu
+//------------------------------------------------------------
+
+document.getElementById("button").addEventListener("click", () => {
+  document.getElementById("menu").classList.toggle("hiddenmenu"); canvas.resize();
+});
 
 //------------------------------------------------------------
 // LOOP

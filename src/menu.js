@@ -1,3 +1,5 @@
+/* global document, FileReader*/
+
 import { downloadRoute, copyRoute, downloadPoints, copyPoints } from "./export.js"
 import { getCurrentRoute } from "./routes.js"
 

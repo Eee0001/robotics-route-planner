@@ -1,3 +1,5 @@
+/* global document*/
+
 export class Canvas {
   constructor (container) {
     
@@ -70,7 +72,7 @@ export class Canvas {
   drawLine (points, color, lineWidth = 3) {
     this.ctx.beginPath();
   
-    for (point of points) {
+    for (let point of points) {
       this.ctx.strokeStyle = color;
       this.ctx.lineWidth = lineWidth;
       

@@ -1,3 +1,5 @@
+/* global document*/
+
 import { getCurrentRoute } from "./routes.js"
 import { calculateDistance } from "./math.js"
 
@@ -44,7 +46,7 @@ export function initMouse (canvas, menu) {
   canvas.element.onmousedown = (e) => {
     const route = getCurrentRoute();
 
-    for (point of route.getPoints()) {
+    for (let point of route.getPoints()) {
       if (calculateDistance(point, getMouse()) <= 25) {
         route.setCurrentPoint(route.getPoints().indexOf(point));
         route.setHoldingPoint(route.getPoints().indexOf(point));

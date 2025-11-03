@@ -1,5 +1,6 @@
 body {
   position: absolute;
+  display: block;
   
   margin: 0px;
 
@@ -9,6 +10,8 @@ body {
   height: 100vh;
   
   background-color: #101010;
+
+  overflow: hidden;
 }
 
 canvas {
@@ -22,8 +25,7 @@ canvas {
   justify-content: center;
   align-items: center;
 
-  top: 0vh;
-  left: 0vw;
+  float: left;
   
   width: 70vw;
   height: 100vh;
@@ -32,19 +34,43 @@ canvas {
 }
 
 #menu {
-  position: absolute;
   display: block;
+
+  float: right;
 
   color: #606060;
   font-family: "Lucida Console", "Courier New", monospace;
-
-  top: 0vh;
-  left: 70vw;
   
   width: 30vw;
   height: 100vh;
 
   background-color: #202020;
+}
+
+#viewport:has(~ #menu.hiddenmenu) {
+  width: 100vw;
+}
+
+.hiddenmenu {
+  width: 0vw;
+  display: none !important;
+}
+
+#button:hover {
+  background-color: #303030;
+}
+
+#button {
+  position: absolute;
+
+  border: 0.5px solid #303030;
+  box-sizing: border-box;
+
+  top: 1vmin;
+  right: 1vmin;
+
+  width: 4vmin;
+  height: 4vmin;
 }
 
 h1 {

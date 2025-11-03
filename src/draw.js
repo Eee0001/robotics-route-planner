@@ -4,7 +4,7 @@ import { calculateAngle, flipAngle, calculateDistance, calculateTurn } from "./m
 // DRAW POINTS
 //------------------------------------------------------------
 export function drawPoints (route, canvas) {
-  for (point of route.getPoints()) {
+  for (let point of route.getPoints()) {
     canvas.drawPoint(point.x, point.y, 10, "rgb(0,0,0)");
   }
 
