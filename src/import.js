@@ -7,26 +7,18 @@ import { menu } from "./menu.js"
 //------------------------------------------------------------
 // METHODS
 //------------------------------------------------------------
-
-function savePoints () {
-  localStorage.setItem("Save", JSON.stringify(missionManager.points));
-}
-
-window.onbeforeunload = savePoints;
-
-//------------------------------------------------------------
-
-export function loadPointsFromSave () {
+export function loadPointsFromText (text) {
   let data = null;
   
   try {
-    data = JSON.parse(localStorage.getItem("Save"));
+    data = JSON.parse(text);
   }
   catch {
-    console.error("BAD JSON IN SAVE DATA");
+    console.error("BAD JSON IN TEXT OR FILE");
   }
 
   if (data !== null) {
+    
     missionManager.route.points = data;
 
     missionManager.currentPoint = null;
@@ -34,7 +26,18 @@ export function loadPointsFromSave () {
 
     menu.refresh();
   }
-  
+}
+
+//------------------------------------------------------------
+
+export function loadPointsFromFile (file) {
+  let fileReader = new FileReader();
+
+  fileReader.onload = () => {
+    loadPointsFromText(fileReader.result);
+  };
+
+  fileReader.readAsText(file);
 }
 
 //------------------------------------------------------------

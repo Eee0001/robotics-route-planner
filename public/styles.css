@@ -31,6 +31,9 @@ canvas {
   height: 100vh;
 
   background-color: #101010;
+
+  user-select: none;
+  outline: none;
 }
 
 #menu {

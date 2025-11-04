@@ -1,91 +1,122 @@
-/* global document*/
+//------------------------------------------------------------
+// IMPORTS
+//------------------------------------------------------------
+import { missionManager } from "./manager.js"
 
-export class Canvas {
-  constructor (container) {
-    
-    this.element = document.createElement("canvas");
-    this.element.setAttribute("id", "canvas");
-    
-    this.ctx = this.element.getContext("2d");
+//------------------------------------------------------------
+// CLASS
+//------------------------------------------------------------
 
-    this.map = document.createElement("img");
-    this.map.src = "mission.png";
-    
-    // Scale is 1mm per px
-    this.baseWidth = 2362;
-    this.baseHeight = 1143;
-    
-    this.scale = 1;
+class Canvas {
 
-    this.container = container;
-    this.container.appendChild(this.element);
-  }
-  
-  resize () {
-    let widthRatio = this.container.clientWidth / this.baseWidth;
-    let heightRatio = this.container.clientHeight / this.baseHeight;
+  constructor () {
+    this._element = document.getElementById("canvas");
 
-    this.scale = Math.min(widthRatio, heightRatio) * 0.9;
+    this._ctx = this._element.getContext("2d");
 
-    this.element.width = this.baseWidth * this.scale;
-    this.element.height = this.baseHeight * this.scale;
+    this._scale = 1;
 
-    this.ctx.scale(this.scale, this.scale);
-    
-    this.drawImage(this.map, 0, 0, this.baseWidth, this.baseHeight);
+    this._container = document.getElementById("viewport");
   }
 
-  getScale () {
-    return this.scale;
+  //----------------------------------------------------------
+
+  resize (field = missionManager.field) {
+    const widthRatio = this._container.clientWidth / field.width;
+    const heightRatio = this._container.clientHeight / field.height;
+
+    this._scale = Math.min(widthRatio, heightRatio) * 0.9;
+
+    this._element.width = field.width * this._scale;
+    this._element.height = field.height * this._scale;
+
+    this._ctx.scale(this._scale, this._scale);
+
+    this.drawImage(field.image, 0, 0, field.width, field.height);
   }
 
-  drawPoint (x, y, r, color, type = "fill") {
-    this.ctx.beginPath();
-    
-    this.ctx.fillStyle = color;
-    this.ctx.strokeStyle = color;
-    
-    this.ctx.arc(x, y, r, 0, 2*Math.PI);
-    
-    if (type === "fill") {
-      this.ctx.fill();
-    }
-    if (type === "stroke") {
-      this.ctx.lineWidth = 3;
-      this.ctx.stroke();
-    }
-  }
-
-  drawText (text, x, y, color = "rgb(0,0,0)") {
-    this.ctx.beginPath();
-    
-    this.ctx.font = "bold 36px sans";
-    this.ctx.textAlign = "center";
-
-    this.ctx.fillStyle = color;
-    
-    this.ctx.fillText(text, x, y);
-    
-    this.ctx.fill();
-  }
-
-  drawLine (points, color, lineWidth = 3) {
-    this.ctx.beginPath();
-  
-    for (let point of points) {
-      this.ctx.strokeStyle = color;
-      this.ctx.lineWidth = lineWidth;
-      
-      this.ctx.lineCap = "round";
-      this.ctx.lineJoin = "round";
-      
-      this.ctx.lineTo(point.x, point.y);
-    }
-    
-    this.ctx.stroke();
-  }
+  //----------------------------------------------------------
 
   drawImage (src, x, y, w, h) {
-    this.ctx.drawImage(src, x, y, w, h);
+    this._ctx.drawImage(src, x, y, w, h);
   }
+
+  //----------------------------------------------------------
+
+  drawPoint (x, y, r, color, type = "fill") {
+    this._ctx.beginPath();
+    
+    this._ctx.strokeStyle = color;
+    this._ctx.lineWidth = 3;
+
+    this._ctx.fillStyle = color;
+
+    this._ctx.arc(x, y, r, 0, Math.PI * 2);
+
+    if (type === "fill") {
+      this._ctx.fill();
+    }
+    
+    if (type === "stroke") {
+      this._ctx.stroke();
+    }
+  }
+
+  //----------------------------------------------------------
+
+  drawLine (points, color, lineWidth = 3) {
+    this._ctx.beginPath();
+
+    this._ctx.strokeStyle = color;
+    this._ctx.lineWidth = lineWidth;
+
+    this._ctx.lineCap = "round";
+    this._ctx.lineJoin = "round";
+
+    for (let point of points) {
+      this._ctx.lineTo(point.x, point.y);
+    }
+
+    this._ctx.stroke();
+  }
+
+  //----------------------------------------------------------
+
+  drawText (text, x, y, color) {
+    this._ctx.beginPath();
+
+    this._ctx.fillStyle = color;
+
+    this._ctx.font = "bold 36px sans";
+    this._ctx.textAlign = "center";
+
+    this._ctx.fillText(text, x, y);
+
+    this._ctx.fill();
+  }
+
+  //----------------------------------------------------------
+
+  get scale () {
+    return this._scale;
+  }
+
+  //----------------------------------------------------------
+
+  get element () {
+    return this._element;
+  }
+
+  //----------------------------------------------------------
+
+  get container () {
+    return this._container;
+  }
+  
 }
+
+//------------------------------------------------------------
+
+export const canvas = new Canvas();
+
+//------------------------------------------------------------
