@@ -1,72 +1,101 @@
-/* global document*/
+//------------------------------------------------------------
+// IMPORTS
+//------------------------------------------------------------
+import { missionManager } from "./manager.js"
+import { canvas } from "./canvas.js"
+import { getDistance } from "./math.js"
+import { menu } from "./menu.js"
 
-import { getCurrentRoute } from "./routes.js"
-import { calculateDistance } from "./math.js"
+//------------------------------------------------------------
+// CLASS
+//------------------------------------------------------------
 
-const mouse = {
-  x: 0,
-  y: 0
-};
+class Mouse {
 
-function getMouse () {
-  return mouse;
-}
-
-function getMouseX () {
-  return mouse.x;
-}
-
-function setMouseX (x) {
-  mouse.x = x;
-}
-
-function getMouseY () {
-  return mouse.y;
-}
-
-function setMouseY (y) {
-  mouse.y = y;
-}
-
-export function initMouse (canvas, menu) {
-  canvas.element.onmousemove = (e) => {
-    const route = getCurrentRoute();
-    
-    setMouseX(Math.round(e.offsetX / canvas.getScale()));
-    setMouseY(Math.round(e.offsetY / canvas.getScale()));
-
-    if (route.getHoldingPoint() !== null) {
-      route.setPointX(route.getHoldingPoint(), getMouseX());
-      route.setPointY(route.getHoldingPoint(), getMouseY());
-    }
-
-    menu.updatePoints(route);
+  constructor () {
+    this._position = {x: 0, y: 0};
   }
 
-  canvas.element.onmousedown = (e) => {
-    const route = getCurrentRoute();
+  //----------------------------------------------------------
 
-    for (let point of route.getPoints()) {
-      if (calculateDistance(point, getMouse()) <= 25) {
-        route.setCurrentPoint(route.getPoints().indexOf(point));
-        route.setHoldingPoint(route.getPoints().indexOf(point));
+  initEvents () {
+    canvas.element.onmousemove = (e)=>{this.mouseMove(e);};
+    
+    document.body.onmouseup = ()=>{this.mouseUp();};
+    
+    canvas.element.onmousedown = ()=>{this.mouseDown();};
+  }
 
-        menu.updatePoints(route);
+  //----------------------------------------------------------
+
+  mouseMove (event) {
+    this._position.x = Math.round(event.offsetX / canvas.scale);
+    this._position.y = Math.round(event.offsetY / canvas.scale);
+
+    if (missionManager.holdingPoint !== null) {
+      missionManager.holdingPoint.x = this._position.x;
+      missionManager.holdingPoint.y = this._position.y;
+    }
+  }
+
+  //----------------------------------------------------------
+
+  mouseUp () {
+    if (missionManager.holdingPoint !== null) {
+      missionManager.holdingPoint = null;
+    }
+  }
+
+  //----------------------------------------------------------
+
+  mouseDown () {
+    for (let point of missionManager.points) {
+      if (getDistance(point, this._position) <= 25) {
+        missionManager.currentPoint = point;
+        missionManager.holdingPoint = point;
       }
     }
 
-    if (route.getHoldingPoint() === null) {
-      route.createPoint(getMouseX(), getMouseY());
+    if (missionManager.holdingPoint === null) {
+      let point = missionManager.route.createPoint(this._position.x, this._position.y);
 
-      route.setCurrentPoint(route.getPoints().length - 1);
-      route.setHoldingPoint(route.getPoints().length - 1);
-
-      menu.updatePoints(route);
+      missionManager.currentPoint = point;
+      missionManager.holdingPoint = point;
     }
+    
+    menu.refresh();
   }
 
-  document.onmouseup = () => {
-    const route = getCurrentRoute();
-    route.setHoldingPoint(null);
+  //----------------------------------------------------------
+
+  get position () {
+    return this._position;
   }
+
+  //----------------------------------------------------------
+  
+  get x () {
+    return this._position.x;
+  }
+
+  set x (x) {
+    this._position.x = x;
+  }
+
+  //----------------------------------------------------------
+
+  get y () {
+    return this._y;
+  }
+
+  set y (y) {
+    this._position.y = y / canvas.scale;
+  }
+  
 }
+
+//------------------------------------------------------------
+
+export const mouse = new Mouse();
+
+//------------------------------------------------------------

@@ -1,76 +1,89 @@
-/* global document, navigator, Blob, URL, */
+//------------------------------------------------------------
+// IMPORTS
+//------------------------------------------------------------
+import { missionManager } from "./manager.js"
+import { getAngle, flipAngle, getTurn, getDistance } from "./math.js"
 
 //------------------------------------------------------------
-// EXPORTS
+// METHODS
 //------------------------------------------------------------
-import { calculateDistance, calculateAngle, flipAngle, calculateTurn } from "./math.js"
 
-// Export route
-//------------------------------------------------------------
-function exportRoute (points) {
-  let route = ``;
-  
-  for(let i = 0; i < (points.length - 1); i++) {
-    let angle1 = i === 0 ? 0 : calculateAngle(points[i-1], points[i]);
-    let angle2 = calculateAngle(points[i], points[i+1]);
-    if (points[i].d === -1) { angle2 = flipAngle(angle2); }
-    let turn = calculateTurn(angle1, angle2);
+function exportRoute (points = missionManager.points) {
+  let route = "";
+
+  for (let i = 0; i < points.length - 1; i++) {
+
+    let thisPoint = points[i];
+    let nextPoint = points[i + 1];
+
+    let thisAngle = getAngle(thisPoint, nextPoint);
+
+    if (thisPoint.d === -1) {
+      thisAngle = flipAngle(thisAngle);
+    }
+
+    let lastAngle  = missionManager.settings.startingAngle;
+
     if (i > 0) {
-      if (points[i-1].d === -1) {
-        turn *= -1;
+      let lastPoint = points[i - 1];
+      lastAngle = getAngle(lastPoint, thisPoint);
+
+      if (lastPoint.d === -1) {
+        lastAngle = flipAngle(lastAngle);
       }
     }
-    const distance = calculateDistance(points[i], points[i+1]);
-    const func = points[i].f;
-    const direction = points[i].d;
 
-    route += ``+turn+`\n`+Math.round(angle2)+`\n`+direction+`\n`+Math.round(distance)+`\n`+func+`\n`; 
-    // turn, angle, direction, distance, function /////////////////////////////////////////////////
+    let angle = Math.round(lastAngle);
+    let turn = getTurn(lastAngle, thisAngle);
+    let distance = Math.round(getDistance(thisPoint, nextPoint));
+    let func = thisPoint.f;
+    let direction = thisPoint.d;
+
+    route += ""+turn+"\n"+angle+"\n"+direction+"\n"+distance+"\n"+func+"\n";
+    
   }
 
   return route.trim();
 }
 
-export function downloadRoute (points) {
-  let data = exportRoute(points);
-  let blob = new Blob([data], { type: 'text.plain' });
-  let url = URL.createObjectURL(blob);
-
-  let element = document.createElement("a");
-  element.setAttribute("download", "Robot-Route");
-  
-  element.href = url;
-
-  element.click();
-
-  element.remove();
-}
-
-export function copyRoute (points) {
-  navigator.clipboard.writeText(exportRoute(points));
-}
-
-// Export points
 //------------------------------------------------------------
-export function exportPoints (points) {
-  return JSON.stringify(points);
-}
 
-export function downloadPoints (points) {
-  let data = exportPoints(points);
-  let blob = new Blob([data], { type: 'application/json' });
+function downloadFile (name, type, data) {
+  let blob = new Blob([data], {type});
   let url = URL.createObjectURL(blob);
 
   let element = document.createElement("a");
-  element.setAttribute("download", "Points");
+  element.setAttribute("download", name);
   
   element.href = url;
-
+  
   element.click();
-
   element.remove();
 }
 
-export function copyPoints (points) {
-  navigator.clipboard.writeText(exportPoints(points));
+//------------------------------------------------------------
+
+
+export function copyPoints (points = missionManager.points) {
+  navigator.clipboard.writeText(JSON.stringify(points));
 }
+
+//------------------------------------------------------------
+
+export function copyRoute (route = exportRoute()) {
+  navigator.clipboard.writeText(route);
+}
+
+//------------------------------------------------------------
+
+export function downloadPoints (points = missionManager.points) {
+  downloadFile("Points", "application/json", JSON.stringify(points));
+}
+
+//------------------------------------------------------------
+
+export function downloadRoute (route = exportRoute()) {
+  downloadFile("Robot-Route", "plain/text", route);
+}
+
+//------------------------------------------------------------

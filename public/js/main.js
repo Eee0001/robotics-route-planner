@@ -1,279 +1,512 @@
 (() => {
-  // src/canvas.js
-  var Canvas = class {
-    constructor(container2) {
-      this.element = document.createElement("canvas");
-      this.element.setAttribute("id", "canvas");
-      this.ctx = this.element.getContext("2d");
-      this.map = document.createElement("img");
-      this.map.src = "mission.png";
-      this.baseWidth = 2362;
-      this.baseHeight = 1143;
-      this.scale = 1;
-      this.container = container2;
-      this.container.appendChild(this.element);
+  // src/fields.js
+  var Field = class {
+    constructor() {
+      this._image = new Image();
+      this._image.src = "mission.png";
+      this._width = 2362;
+      this._height = 1143;
     }
-    resize() {
-      let widthRatio = this.container.clientWidth / this.baseWidth;
-      let heightRatio = this.container.clientHeight / this.baseHeight;
-      this.scale = Math.min(widthRatio, heightRatio) * 0.9;
-      this.element.width = this.baseWidth * this.scale;
-      this.element.height = this.baseHeight * this.scale;
-      this.ctx.scale(this.scale, this.scale);
-      this.drawImage(this.map, 0, 0, this.baseWidth, this.baseHeight);
+    //----------------------------------------------------------
+    get image() {
+      return this._image;
     }
-    getScale() {
-      return this.scale;
+    get width() {
+      return this._width;
     }
-    drawPoint(x, y, r, color, type = "fill") {
-      this.ctx.beginPath();
-      this.ctx.fillStyle = color;
-      this.ctx.strokeStyle = color;
-      this.ctx.arc(x, y, r, 0, 2 * Math.PI);
-      if (type === "fill") {
-        this.ctx.fill();
-      }
-      if (type === "stroke") {
-        this.ctx.lineWidth = 3;
-        this.ctx.stroke();
-      }
-    }
-    drawText(text, x, y, color = "rgb(0,0,0)") {
-      this.ctx.beginPath();
-      this.ctx.font = "bold 36px sans";
-      this.ctx.textAlign = "center";
-      this.ctx.fillStyle = color;
-      this.ctx.fillText(text, x, y);
-      this.ctx.fill();
-    }
-    drawLine(points, color, lineWidth = 3) {
-      this.ctx.beginPath();
-      for (point of points) {
-        this.ctx.strokeStyle = color;
-        this.ctx.lineWidth = lineWidth;
-        this.ctx.lineCap = "round";
-        this.ctx.lineJoin = "round";
-        this.ctx.lineTo(point.x, point.y);
-      }
-      this.ctx.stroke();
-    }
-    drawImage(src, x, y, w, h) {
-      this.ctx.drawImage(src, x, y, w, h);
+    get height() {
+      return this._height;
     }
   };
+
+  // src/settings.js
+  var Settings = class {
+    constructor() {
+      this._robotWidth = 200;
+      this._startingAngle = 0;
+      this._showInfo = true;
+      this._showOverlay = false;
+    }
+    //----------------------------------------------------------
+    get robotWidth() {
+      return this._robotWidth;
+    }
+    set robotWidth(width) {
+      this._robotWidth = width;
+    }
+    //----------------------------------------------------------
+    get startingAngle() {
+      return this._startingAngle;
+    }
+    set startingAngle(angle) {
+      this._startingAngle = angle;
+    }
+    //----------------------------------------------------------
+    get showInfo() {
+      return this._showInfo;
+    }
+    set showInfo(value) {
+      this._showInfo = value;
+    }
+    toggleShowInfo() {
+      this._showInfo = !this._showInfo;
+    }
+    //----------------------------------------------------------
+    get showOverlay() {
+      return this._showOverlay;
+    }
+    set showOverlay(value) {
+      this._showOverlay = value;
+    }
+    toggleShowOverlay() {
+      this._showOverlay = !this._showOverlay;
+    }
+  };
+
+  // src/routes.js
+  var Route = class {
+    constructor() {
+      this._currentPoint = null;
+      this._holdingPoint = null;
+      this._points = [];
+      this._trash = [];
+    }
+    //----------------------------------------------------------
+    createPoint(x, y, d = 1, f = 0) {
+      const point = { x, y, d, f };
+      this._points.push(point);
+      this._currentPoint = point;
+      return point;
+    }
+    //----------------------------------------------------------
+    deletePoint() {
+      if (this._points.length > 0) {
+        this._trash.push(this._points.pop());
+        this._currentPoint = null;
+        this._holdingPoint = null;
+      }
+    }
+    //----------------------------------------------------------
+    restorePoint() {
+      if (this._trash.length > 0) {
+        this._points.push(this._trash.pop());
+        this._currentPoint = null;
+        this._holdingPoint = null;
+      }
+    }
+    //----------------------------------------------------------
+    wipePoints() {
+      this._points = [];
+      this._trash = [];
+      this._currentPoint = null;
+      this._holdingPoint = null;
+    }
+    //----------------------------------------------------------
+    moveCurrentPoint(direction) {
+      if (this.currentPoint !== null) {
+        if (direction === "up") {
+          this.currentPoint.y -= 1;
+        }
+        if (direction === "down") {
+          this.currentPoint.y += 1;
+        }
+        if (direction === "left") {
+          this.currentPoint.x -= 1;
+        }
+        if (direction === "right") {
+          this.currentPoint.x += 1;
+        }
+      }
+    }
+    //----------------------------------------------------------
+    get points() {
+      return this._points;
+    }
+    set points(points) {
+      this._points = points;
+    }
+    //----------------------------------------------------------
+    get currentPoint() {
+      return this._currentPoint;
+    }
+    set currentPoint(point) {
+      this._currentPoint = point;
+    }
+    //----------------------------------------------------------
+    get holdingPoint() {
+      return this._holdingPoint;
+    }
+    set holdingPoint(point) {
+      this._holdingPoint = point;
+    }
+  };
+
+  // src/missions.js
+  var Mission = class {
+    constructor() {
+      this._name = "Robot Mission";
+      this._field = new Field();
+      this._settings = new Settings();
+      this._route = new Route();
+    }
+    //----------------------------------------------------------
+    get name() {
+      return this._name;
+    }
+    set name(name) {
+      this._name = name;
+    }
+    //----------------------------------------------------------
+    get field() {
+      return this._field;
+    }
+    set field(field) {
+      this._field = field;
+    }
+    //----------------------------------------------------------
+    get settings() {
+      return this._settings;
+    }
+    set settings(settings) {
+      this._settings = settings;
+    }
+    //----------------------------------------------------------
+    get route() {
+      return this._route;
+    }
+    set route(route) {
+      this._route = route;
+    }
+  };
+
+  // src/manager.js
+  var MissionManager = class {
+    constructor() {
+      this._currentMission = null;
+      this._missions = [];
+    }
+    //----------------------------------------------------------
+    createMission() {
+      const mission = new Mission();
+      this._missions.push(mission);
+      this._currentMission = mission;
+      return mission;
+    }
+    //----------------------------------------------------------
+    deleteMission(mission) {
+      const index = this._missions.indexOf(mission);
+      this._missions.splice(index, 1);
+      if (this._currentMission === mission) {
+        this._currentMission = null;
+      }
+    }
+    //----------------------------------------------------------
+    selectMission(mission) {
+      this.currentMission = mission;
+    }
+    //----------------------------------------------------------
+    get missions() {
+      return this._missions;
+    }
+    set missions(missions) {
+      this._missions = missions;
+    }
+    //----------------------------------------------------------
+    get currentMission() {
+      return this._currentMission;
+    }
+    set currentMission(mission) {
+      this._currentMission = mission;
+    }
+    //----------------------------------------------------------
+    get settings() {
+      return this.currentMission?.settings;
+    }
+    get route() {
+      return this.currentMission?.route;
+    }
+    get field() {
+      return this.currentMission?.field;
+    }
+    //----------------------------------------------------------
+    get points() {
+      return this.currentMission?.route?.points ?? [];
+    }
+    //----------------------------------------------------------
+    get currentPoint() {
+      return this.currentMission?.route?.currentPoint;
+    }
+    set currentPoint(point) {
+      if (this.currentMission?.route !== null) {
+        this.currentMission.route.currentPoint = point;
+      }
+    }
+    //----------------------------------------------------------
+    get holdingPoint() {
+      return this.currentMission?.route?.holdingPoint;
+    }
+    set holdingPoint(point) {
+      if (this.currentMission?.route !== null) {
+        this.currentMission.route.holdingPoint = point;
+      }
+    }
+  };
+  var missionManager = new MissionManager();
+
+  // src/canvas.js
+  var Canvas = class {
+    constructor() {
+      this._element = document.getElementById("canvas");
+      this._ctx = this._element.getContext("2d");
+      this._scale = 1;
+      this._container = document.getElementById("viewport");
+    }
+    //----------------------------------------------------------
+    resize(field = missionManager.field) {
+      const widthRatio = this._container.clientWidth / field.width;
+      const heightRatio = this._container.clientHeight / field.height;
+      this._scale = Math.min(widthRatio, heightRatio) * 0.9;
+      this._element.width = field.width * this._scale;
+      this._element.height = field.height * this._scale;
+      this._ctx.scale(this._scale, this._scale);
+      this.drawImage(field.image, 0, 0, field.width, field.height);
+    }
+    //----------------------------------------------------------
+    drawImage(src, x, y, w, h) {
+      this._ctx.drawImage(src, x, y, w, h);
+    }
+    //----------------------------------------------------------
+    drawPoint(x, y, r, color, type = "fill") {
+      this._ctx.beginPath();
+      this._ctx.strokeStyle = color;
+      this._ctx.lineWidth = 3;
+      this._ctx.fillStyle = color;
+      this._ctx.arc(x, y, r, 0, Math.PI * 2);
+      if (type === "fill") {
+        this._ctx.fill();
+      }
+      if (type === "stroke") {
+        this._ctx.stroke();
+      }
+    }
+    //----------------------------------------------------------
+    drawLine(points, color, lineWidth = 3) {
+      this._ctx.beginPath();
+      this._ctx.strokeStyle = color;
+      this._ctx.lineWidth = lineWidth;
+      this._ctx.lineCap = "round";
+      this._ctx.lineJoin = "round";
+      for (let point of points) {
+        this._ctx.lineTo(point.x, point.y);
+      }
+      this._ctx.stroke();
+    }
+    //----------------------------------------------------------
+    drawText(text, x, y, color) {
+      this._ctx.beginPath();
+      this._ctx.fillStyle = color;
+      this._ctx.font = "bold 36px sans";
+      this._ctx.textAlign = "center";
+      this._ctx.fillText(text, x, y);
+      this._ctx.fill();
+    }
+    //----------------------------------------------------------
+    get scale() {
+      return this._scale;
+    }
+    //----------------------------------------------------------
+    get element() {
+      return this._element;
+    }
+    //----------------------------------------------------------
+    get container() {
+      return this._container;
+    }
+  };
+  var canvas = new Canvas();
 
   // src/math.js
   function radToDeg(angle) {
     return angle * 180 / Math.PI;
   }
-  function calculateDistance(p1, p2) {
+  function getDistance(p1, p2) {
     return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
   }
-  function calculateAngle(p1, p2) {
+  function getAngle(p1, p2) {
     return radToDeg(Math.atan2(p2.x - p1.x, p1.y - p2.y));
   }
   function flipAngle(angle) {
     return -1 * Math.sign(angle) * (180 - Math.abs(angle));
   }
-  function calculateTurn(angle1, angle2) {
-    return Math.sign((angle2 - angle1 + 540) % 360 - 180);
+  function getTurn(a1, a2) {
+    return Math.sign((a2 - a1 + 540) % 360 - 180);
+  }
+
+  // src/display.js
+  function drawPoints(points = missionManager.points, canvas2 = canvas) {
+    for (let point of points) {
+      canvas2.drawPoint(point.x, point.y, 10, "#000000");
+    }
+  }
+  function drawSelect(point = missionManager.currentPoint, canvas2 = canvas) {
+    if (point !== null) {
+      canvas2.drawPoint(point.x, point.y, 20, "#000000", "stroke");
+    }
+  }
+  function drawLines(points = missionManager.points, canvas2 = canvas) {
+    canvas2.drawLine(points, "#000000");
+  }
+  function drawAngles(settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
+    if (settings.showInfo) {
+      for (let i = 0; i < points.length - 1; i++) {
+        let thisPoint = points[i];
+        let nextPoint = points[i + 1];
+        let angle = getAngle(thisPoint, nextPoint);
+        if (thisPoint.d === -1) {
+          angle = flipAngle(angle);
+        }
+        angle = Math.round(angle);
+        let x = thisPoint.x;
+        let y = thisPoint.y - 24;
+        canvas2.drawText(angle, x, y, "#ff00ff");
+      }
+    }
+  }
+  function drawTurns(settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
+    if (settings.showInfo) {
+      for (let i = 0; i < points.length - 1; i++) {
+        let thisPoint = points[i];
+        let nextPoint = points[i + 1];
+        let thisAngle = getAngle(thisPoint, nextPoint);
+        if (thisPoint.d === -1) {
+          thisAngle = flipAngle(thisAngle);
+        }
+        let lastAngle = settings.startingAngle;
+        if (i > 0) {
+          let lastPoint = points[i - 1];
+          lastAngle = getAngle(lastPoint, thisPoint);
+          if (lastPoint.d === -1) {
+            lastAngle = flipAngle(lastAngle);
+          }
+        }
+        let turn = getTurn(lastAngle, thisAngle);
+        let x = thisPoint.x + 36;
+        let y = thisPoint.y + 12;
+        canvas2.drawText(turn, x, y, "#0000ff");
+      }
+    }
+  }
+  function drawDistances(settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
+    if (settings.showInfo) {
+      for (let i = 0; i < points.length - 1; i++) {
+        let thisPoint = points[i];
+        let nextPoint = points[i + 1];
+        let distance = Math.round(getDistance(thisPoint, nextPoint));
+        let x = (thisPoint.x + nextPoint.x) / 2;
+        let y = (thisPoint.y + nextPoint.y) / 2;
+        canvas2.drawText(distance, x, y, "#ffff00");
+      }
+    }
+  }
+  function drawDirections(settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
+    if (settings.showInfo) {
+      for (let point of points) {
+        let x = point.x - 36;
+        let y = point.y + 12;
+        canvas2.drawText(point.d, x, y, "#ff0000");
+      }
+    }
+  }
+  function drawFunctions(settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
+    if (settings.showInfo) {
+      for (let point of points) {
+        let x = point.x;
+        let y = point.y + 48;
+        canvas2.drawText(point.f, x, y, "#00ff00");
+      }
+    }
+  }
+  function drawOverlay(settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
+    if (settings.showOverlay) {
+      canvas2.drawLine(points, "#00000080", settings.robotWidth);
+    }
+  }
+
+  // src/import.js
+  function loadPointsFromText(text) {
+    let data = null;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      console.error("BAD JSON IN TEXT OR FILE");
+    }
+    if (data !== null) {
+      missionManager.route.points = data;
+      missionManager.currentPoint = null;
+      missionManager.holdingPoint = null;
+      menu.refresh();
+    }
+  }
+  function loadPointsFromFile(file) {
+    let fileReader = new FileReader();
+    fileReader.onload = () => {
+      loadPointsFromText(fileReader.result);
+    };
+    fileReader.readAsText(file);
   }
 
   // src/export.js
-  function exportRoute(points) {
-    let route2 = ``;
+  function exportRoute(points = missionManager.points) {
+    let route = "";
     for (let i = 0; i < points.length - 1; i++) {
-      let angle1 = i === 0 ? 0 : calculateAngle(points[i - 1], points[i]);
-      let angle2 = calculateAngle(points[i], points[i + 1]);
-      if (points[i].d === -1) {
-        angle2 = flipAngle(angle2);
+      let thisPoint = points[i];
+      let nextPoint = points[i + 1];
+      let thisAngle = getAngle(thisPoint, nextPoint);
+      if (thisPoint.d === -1) {
+        thisAngle = flipAngle(thisAngle);
       }
-      let turn = calculateTurn(angle1, angle2);
+      let lastAngle = missionManager.settings.startingAngle;
       if (i > 0) {
-        if (points[i - 1].d === -1) {
-          turn *= -1;
+        let lastPoint = points[i - 1];
+        lastAngle = getAngle(lastPoint, thisPoint);
+        if (lastPoint.d === -1) {
+          lastAngle = flipAngle(lastAngle);
         }
       }
-      const distance = calculateDistance(points[i], points[i + 1]);
-      const func = points[i].f;
-      const direction = points[i].d;
-      route2 += `` + turn + `
-` + Math.round(angle2) + `
-` + direction + `
-` + Math.round(distance) + `
-` + func + `
-`;
+      let angle = Math.round(lastAngle);
+      let turn = getTurn(lastAngle, thisAngle);
+      let distance = Math.round(getDistance(thisPoint, nextPoint));
+      let func = thisPoint.f;
+      let direction = thisPoint.d;
+      route += "" + turn + "\n" + angle + "\n" + direction + "\n" + distance + "\n" + func + "\n";
     }
-    return route2.trim();
+    return route.trim();
   }
-  function downloadRoute(points) {
-    let data = exportRoute(points);
-    let blob = new Blob([data], { type: "text.plain" });
+  function downloadFile(name, type, data) {
+    let blob = new Blob([data], { type });
     let url = URL.createObjectURL(blob);
     let element = document.createElement("a");
-    element.setAttribute("download", "Robot-Route");
+    element.setAttribute("download", name);
     element.href = url;
     element.click();
     element.remove();
   }
-  function copyRoute(points) {
-    navigator.clipboard.writeText(exportRoute(points));
+  function copyPoints(points = missionManager.points) {
+    navigator.clipboard.writeText(JSON.stringify(points));
   }
-  function exportPoints(points) {
-    return JSON.stringify(points);
+  function copyRoute(route = exportRoute()) {
+    navigator.clipboard.writeText(route);
   }
-  function downloadPoints(points) {
-    let data = exportPoints(points);
-    let blob = new Blob([data], { type: "application/json" });
-    let url = URL.createObjectURL(blob);
-    let element = document.createElement("a");
-    element.setAttribute("download", "Points");
-    element.href = url;
-    element.click();
-    element.remove();
+  function downloadPoints(points = missionManager.points) {
+    downloadFile("Points", "application/json", JSON.stringify(points));
   }
-  function copyPoints(points) {
-    navigator.clipboard.writeText(exportPoints(points));
+  function downloadRoute(route = exportRoute()) {
+    downloadFile("Robot-Route", "plain/text", route);
   }
-
-  // src/routes.js
-  var currentRoute = null;
-  function setCurrentRoute(route2) {
-    currentRoute = route2;
-  }
-  function getCurrentRoute() {
-    return currentRoute;
-  }
-  var Route = class {
-    constructor(menu2) {
-      this.name = "Robot Route";
-      this.points = [];
-      this.trash = [];
-      this.currentPoint = null;
-      this.holdingPoint = null;
-      setCurrentRoute(this);
-    }
-    createPoint(x, y, d = 1, f = 0) {
-      this.points.push({
-        x,
-        y,
-        d,
-        f
-      });
-      this.currentPoint = this.points.length - 1;
-    }
-    deletePoint() {
-      if (this.points.length > 0) {
-        this.trash.push(this.points.pop());
-      }
-      if (this.holdingPoint >= this.points.length) {
-        this.holdingPoint = null;
-      }
-      if (this.currentPoint >= this.points.length) {
-        this.currentPoint = null;
-      }
-    }
-    restorePoint() {
-      if (this.trash.length > 0) {
-        this.points.push(this.trash.pop());
-      }
-    }
-    setPoints(points) {
-      this.points = points;
-      this.currentPoint = null;
-      this.holdingPoint = null;
-    }
-    wipePoints() {
-      this.points = [];
-      this.currentPoint = null;
-      this.holdingPoint = null;
-    }
-    movePoint(direction) {
-      if (this.currentPoint != null) {
-        if (direction === "up") {
-          this.points[this.currentPoint].y -= 1;
-        }
-        if (direction === "down") {
-          this.points[this.currentPoint].y += 1;
-        }
-        if (direction === "left") {
-          this.points[this.currentPoint].x -= 1;
-        }
-        if (direction === "right") {
-          this.points[this.currentPoint].x += 1;
-        }
-      }
-    }
-    // Setter functions for points
-    setCurrentPoint(index) {
-      this.currentPoint = index;
-    }
-    setHoldingPoint(index) {
-      this.holdingPoint = index;
-    }
-    setPointX(index, x) {
-      if (index !== null) {
-        this.points[index].x = x;
-      }
-    }
-    setPointY(index, y) {
-      if (index !== null) {
-        this.points[index].y = y;
-      }
-    }
-    setPointD(index, d) {
-      if (index !== null) {
-        this.points[index].d = d;
-      }
-    }
-    setPointF(index, f) {
-      if (index !== null) {
-        this.points[index].f = Number(f);
-      }
-    }
-    // Getter functions for points
-    getCurrentPoint() {
-      return this.currentPoint;
-    }
-    getHoldingPoint() {
-      return this.holdingPoint;
-    }
-    getPoints() {
-      return this.points;
-    }
-    getPointX(index) {
-      if (index !== null) {
-        return this.points[index].x;
-      } else {
-        return null;
-      }
-    }
-    getPointY(index) {
-      if (index !== null) {
-        return this.points[index].y;
-      } else {
-        return null;
-      }
-    }
-    getPointD(index) {
-      if (index !== null) {
-        return this.points[index].d;
-      } else {
-        return null;
-      }
-    }
-    getPointF(index) {
-      if (index !== null) {
-        return this.points[index].f;
-      } else {
-        return null;
-      }
-    }
-  };
 
   // src/menu.js
   var Menu = class {
-    constructor(route2) {
+    constructor() {
       this.elements = {
         formPoints: document.getElementById("point"),
         formSettings: document.getElementById("settings"),
@@ -295,13 +528,6 @@
         pointsI: document.getElementById("PointsI"),
         pointsF: document.getElementById("PointsF")
       };
-      this.settings = {
-        robotWidth: 200,
-        showOverlay: false,
-        showInfo: true
-      };
-      this.elements.overlay.checked = this.settings.showOverlay;
-      this.elements.info.checked = this.settings.showInfo;
       this.elements.formPoints.onsubmit = (e) => {
         e.preventDefault();
       };
@@ -309,329 +535,262 @@
         e.preventDefault();
       };
     }
-    getPointX() {
-      return this.elements.pointX.valueAsNumber;
-    }
-    getPointY() {
-      return this.elements.pointX.valueAsNumber;
-    }
-    getPointD() {
-      return this.elements.pointDF.checked === true ? 1 : -1;
-    }
-    getPointF() {
-      return this.elements.pointF.valueAsNumber;
-    }
-    getRobotW() {
-      return this.elements.robotW.valueAsNumber;
-    }
-    getOverlay() {
-      return this.elements.overlay.checked;
-    }
-    toggleOverlay() {
-      this.settings.showOverlay = !this.settings.showOverlay;
-      this.elements.overlay.checked = this.settings.showOverlay;
-    }
-    getInfo() {
-      return this.elements.info.checked;
-    }
-    toggleInfo() {
-      this.settings.showInfo = !this.settings.showInfo;
-      this.elements.info.checked = this.settings.showInfo;
-    }
-    getPointsFromText(route2) {
-      let json2 = null;
-      try {
-        json2 = JSON.parse(this.elements.pointsT.value);
-        route2.setCurrentPoint(null);
-        route2.setHoldingPoint(null);
-      } catch {
-        json2 = null;
+    //----------------------------------------------------------
+    initEvents() {
+      for (let id of ["pointX", "pointY", "pointDF", "pointDB", "pointF"]) {
+        this.elements[id].onchange = () => {
+          this.updateCurrentPoint();
+        };
       }
-      route2.setPoints(json2 !== null ? json2 : route2.getPoints());
-      this.updatePoints(route2);
-    }
-    getPointsFromFile(route2) {
-      let fileReader = new FileReader();
-      const this2 = this;
-      fileReader.onload = () => {
-        let json2 = null;
-        try {
-          json2 = JSON.parse(fileReader.result);
-          route2.setCurrentPoint(null);
-          route2.setHoldingPoint(null);
-        } catch {
-          json2 = null;
-        }
-        route2.setPoints(json2 !== null ? json2 : route2.getPoints());
-        this2.updatePoints(route2);
-      };
-      fileReader.readAsText(this.elements.pointsF.files[0]);
-    }
-    updateSettings() {
-      this.settings.robotWidth = this.getRobotW();
-      this.settings.showOverlay = this.getOverlay();
-      this.settings.showInfo = this.getInfo();
-    }
-    updatePoints(route2) {
-      this.elements.pointX.value = route2.getPointX(route2.getCurrentPoint());
-      this.elements.pointY.value = route2.getPointY(route2.getCurrentPoint());
-      if (route2.getPointD(route2.getCurrentPoint()) === 1) {
-        this.elements.pointDF.checked = true;
-      } else if (route2.getPointD(route2.getCurrentPoint()) === -1) {
-        this.elements.pointDB.checked = true;
-      } else {
-        this.elements.pointDF.checked = false;
-        this.elements.pointDB.checked = false;
+      for (let id of ["robotW", "overlay", "info"]) {
+        this.elements[id].onchange = () => {
+          this.updateSettings();
+        };
       }
-      this.elements.pointF.value = route2.getPointF(route2.getCurrentPoint());
-    }
-    updateEvents(route2) {
-      const this2 = this;
-      this.elements.pointX.onchange = () => {
-        route2.setPointX(route2.getCurrentPoint(), this2.getPointX());
-      };
-      this.elements.pointY.onchange = () => {
-        route2.setPointY(route2.getCurrentPoint(), this2.getPointY());
-      };
-      this.elements.pointDF.onchange = () => {
-        route2.setPointD(route2.getCurrentPoint(), this2.getPointD());
-      };
-      this.elements.pointDB.onchange = () => {
-        route2.setPointD(route2.getCurrentPoint(), this2.getPointD());
-      };
-      this.elements.pointF.onchange = () => {
-        route2.setPointF(route2.getCurrentPoint(), this2.getPointF());
-      };
-      this.elements.robotW.onchange = () => {
-        this2.settings.robotWidth = this2.getRobotW();
-      };
-      this.elements.overlay.onchange = () => {
-        this2.settings.showOverlay = this2.getOverlay();
-      };
-      this.elements.info.onchange = () => {
-        this2.settings.showInfo = this2.getInfo();
-      };
       this.elements.routeD.onclick = () => {
-        downloadRoute(route2.getPoints());
+        downloadRoute();
       };
       this.elements.routeC.onclick = () => {
-        copyRoute(route2.getPoints());
+        copyRoute();
       };
       this.elements.pointsD.onclick = () => {
-        downloadPoints(route2.getPoints());
+        downloadPoints();
       };
       this.elements.pointsC.onclick = () => {
-        copyPoints(route2.getPoints());
+        copyPoints();
       };
       this.elements.pointsT.onchange = () => {
-        this2.getPointsFromText(getCurrentRoute());
+        this.importPointsFromText();
       };
       this.elements.pointsI.onclick = () => {
         this.elements.pointsF.click();
       };
       this.elements.pointsF.onchange = () => {
-        this2.getPointsFromFile(getCurrentRoute());
+        this.importPointsFromFile();
       };
     }
-    selectRoute(route2) {
-      this.updatePoints(route2);
-      this.updateEvents(route2);
-    }
-  };
-
-  // src/draw.js
-  function drawPoints(route2, canvas2) {
-    for (point of route2.getPoints()) {
-      canvas2.drawPoint(point.x, point.y, 10, "rgb(0,0,0)");
-    }
-    if (route2.getCurrentPoint() !== null) {
-      canvas2.drawPoint(route2.getPointX(route2.getCurrentPoint()), route2.getPointY(route2.getCurrentPoint()), 20, "rgb(0,0,0)", "stroke");
-    }
-  }
-  function drawLines(route2, canvas2) {
-    canvas2.drawLine(route2.getPoints(), "rgb(0,0,0)");
-  }
-  function drawOverlay(settings, route2, canvas2) {
-    if (settings.showOverlay) {
-      canvas2.drawLine(route2.getPoints(), "rgb(0,0,0,0.5)", settings.robotWidth);
-    }
-  }
-  function drawInfo(settings, route2, canvas2) {
-    if (settings.showInfo) {
-      const points = route2.getPoints();
-      for (let i = 0; i < points.length; i++) {
-        if (i < points.length - 1) {
-          let angle = calculateAngle(points[i], points[i + 1]);
-          angle = points[i].d === -1 ? flipAngle(angle) : angle;
-          canvas2.drawText(Math.round(angle), points[i].x, points[i].y - 24, "rgb(255,0,255)");
-          let distance = calculateDistance(points[i], points[i + 1]);
-          let middle = {
-            x: (points[i].x + points[i + 1].x) / 2,
-            y: (points[i].y + points[i + 1].y) / 2
-          };
-          canvas2.drawText(Math.round(distance), middle.x, middle.y, "rgb(255,255,0)");
-          let angle1 = i === 0 ? 0 : calculateAngle(points[i - 1], points[i]);
-          let angle2 = calculateAngle(points[i], points[i + 1]);
-          angle2 = points[i].d === -1 ? flipAngle(angle2) : angle2;
-          let turn = calculateTurn(angle1, angle2);
-          if (i > 0) {
-            if (points[i - 1].d === -1) {
-              turn *= -1;
-            }
-          }
-          canvas2.drawText(turn, points[i].x + 36, points[i].y + 12, "rgb(0,0,255)");
-        }
-        canvas2.drawText(points[i].d, points[i].x - 36, points[i].y + 12, "rgb(255,0,0)");
-        canvas2.drawText(points[i].f, points[i].x, points[i].y + 48, "rgb(0,255,0)");
+    //----------------------------------------------------------
+    refresh() {
+      const point = missionManager.currentPoint;
+      if (point !== null) {
+        this.elements.pointX.value = point.x;
+        this.elements.pointY.value = point.y;
+        this.elements.pointDF.checked = point.d === 1;
+        this.elements.pointDB.checked = point.d === -1;
+        this.elements.pointF.value = point.f;
+      }
+      const settings = missionManager.settings;
+      if (settings !== null) {
+        this.elements.robotW.value = settings.robotWidth;
+        this.elements.info.checked = settings.showInfo;
+        this.elements.overlay.checked = settings.showOverlay;
       }
     }
-  }
+    //----------------------------------------------------------
+    updateCurrentPoint() {
+      const point = missionManager.currentPoint;
+      if (point) {
+        point.x = this.elements.pointX.valueAsNumber;
+        point.y = this.elements.pointY.valueAsNumber;
+        point.d = this.elements.pointDF.checked ? 1 : -1;
+        point.f = this.elements.pointF.valueAsNumber;
+      }
+    }
+    //----------------------------------------------------------
+    updateSettings() {
+      const settings = missionManager.settings;
+      if (settings) {
+        settings.robotWidth = this.elements.robotW.valueAsNumber;
+        settings.showInfo = this.elements.info.checked;
+        settings.showOverlay = this.elements.overlay.checked;
+      }
+    }
+    //----------------------------------------------------------
+    importPointsFromFile() {
+      loadPointsFromFile(this.elements.pointsF.files[0]);
+    }
+    //----------------------------------------------------------
+    importPointsFromText() {
+      loadPointsFromText(this.elements.pointsT.value);
+    }
+  };
+  var menu = new Menu();
 
   // src/mouse.js
-  var mouse = {
-    x: 0,
-    y: 0
-  };
-  function getMouse() {
-    return mouse;
-  }
-  function getMouseX() {
-    return mouse.x;
-  }
-  function setMouseX(x) {
-    mouse.x = x;
-  }
-  function getMouseY() {
-    return mouse.y;
-  }
-  function setMouseY(y) {
-    mouse.y = y;
-  }
-  function initMouse(canvas2, menu2) {
-    canvas2.element.onmousemove = (e) => {
-      const route2 = getCurrentRoute();
-      setMouseX(Math.round(e.offsetX / canvas2.getScale()));
-      setMouseY(Math.round(e.offsetY / canvas2.getScale()));
-      if (route2.getHoldingPoint() !== null) {
-        route2.setPointX(route2.getHoldingPoint(), getMouseX());
-        route2.setPointY(route2.getHoldingPoint(), getMouseY());
+  var Mouse = class {
+    constructor() {
+      this._position = { x: 0, y: 0 };
+    }
+    //----------------------------------------------------------
+    initEvents() {
+      canvas.element.onmousemove = (e) => {
+        this.mouseMove(e);
+      };
+      document.body.onmouseup = () => {
+        this.mouseUp();
+      };
+      canvas.element.onmousedown = () => {
+        this.mouseDown();
+      };
+    }
+    //----------------------------------------------------------
+    mouseMove(event) {
+      this._position.x = Math.round(event.offsetX / canvas.scale);
+      this._position.y = Math.round(event.offsetY / canvas.scale);
+      if (missionManager.holdingPoint !== null) {
+        missionManager.holdingPoint.x = this._position.x;
+        missionManager.holdingPoint.y = this._position.y;
       }
-      menu2.updatePoints(route2);
-    };
-    canvas2.element.onmousedown = (e) => {
-      const route2 = getCurrentRoute();
-      for (point of route2.getPoints()) {
-        if (calculateDistance(point, getMouse()) <= 25) {
-          route2.setCurrentPoint(route2.getPoints().indexOf(point));
-          route2.setHoldingPoint(route2.getPoints().indexOf(point));
-          menu2.updatePoints(route2);
+    }
+    //----------------------------------------------------------
+    mouseUp() {
+      if (missionManager.holdingPoint !== null) {
+        missionManager.holdingPoint = null;
+      }
+    }
+    //----------------------------------------------------------
+    mouseDown() {
+      for (let point of missionManager.points) {
+        if (getDistance(point, this._position) <= 25) {
+          missionManager.currentPoint = point;
+          missionManager.holdingPoint = point;
         }
       }
-      if (route2.getHoldingPoint() === null) {
-        route2.createPoint(getMouseX(), getMouseY());
-        route2.setCurrentPoint(route2.getPoints().length - 1);
-        route2.setHoldingPoint(route2.getPoints().length - 1);
-        menu2.updatePoints(route2);
+      if (missionManager.holdingPoint === null) {
+        let point = missionManager.route.createPoint(this._position.x, this._position.y);
+        missionManager.currentPoint = point;
+        missionManager.holdingPoint = point;
       }
-    };
-    document.onmouseup = () => {
-      const route2 = getCurrentRoute();
-      route2.setHoldingPoint(null);
-    };
-  }
+      menu.refresh();
+    }
+    //----------------------------------------------------------
+    get position() {
+      return this._position;
+    }
+    //----------------------------------------------------------
+    get x() {
+      return this._position.x;
+    }
+    set x(x) {
+      this._position.x = x;
+    }
+    //----------------------------------------------------------
+    get y() {
+      return this._y;
+    }
+    set y(y) {
+      this._position.y = y / canvas.scale;
+    }
+  };
+  var mouse = new Mouse();
 
   // src/save.js
-  function SavePoints(route2) {
-    localStorage.setItem("Save", exportPoints(route2.getPoints()));
+  function savePoints() {
+    localStorage.setItem("Save", JSON.stringify(missionManager.points));
   }
-  window.onbeforeunload = () => {
-    SavePoints(getCurrentRoute());
-  };
-  function LoadPreviousSavedPoints(route2, menu2) {
+  window.onbeforeunload = savePoints;
+  function loadPointsFromSave() {
+    let data = null;
     try {
-      json = JSON.parse(localStorage.getItem("Save"));
-      route2.setCurrentPoint(null);
-      route2.setHoldingPoint(null);
+      data = JSON.parse(localStorage.getItem("Save"));
     } catch {
-      json = null;
+      console.error("BAD JSON IN SAVE DATA");
     }
-    route2.setPoints(json !== null ? json : route2.getPoints());
-    menu2.selectRoute(route2);
+    if (data !== null) {
+      missionManager.route.points = data;
+      missionManager.currentPoint = null;
+      missionManager.holdingPoint = null;
+      menu.refresh();
+    }
   }
 
   // src/keyboard.js
-  function initKeyboard(container2, menu2) {
-    container2.onkeyup = function(e) {
-      let key = e.key;
-      const route2 = getCurrentRoute();
+  var Keyboard = class {
+    constructor() {
+    }
+    //----------------------------------------------------------
+    initEvents() {
+      canvas.container.onkeyup = (e) => {
+        this.keyUp(e);
+      };
+      canvas.container.onkeydown = (e) => {
+        this.keyDown(e);
+      };
+    }
+    //----------------------------------------------------------
+    keyUp(event) {
+      const key = event.key;
       if (key === "Backspace") {
-        route2.deletePoint();
+        missionManager.route.deletePoint();
       }
       if (key === "Enter") {
-        route2.restorePoint();
+        missionManager.route.restorePoint();
       }
       if (key === "-") {
-        route2.setPointD(route2.getCurrentPoint(), -1);
+        missionManager.route.currentPoint.d = -1;
       }
       if (key === "=") {
-        route2.setPointD(route2.getCurrentPoint(), 1);
+        missionManager.route.currentPoint.d = 1;
       }
       if (!isNaN(key)) {
-        route2.setPointF(route2.getCurrentPoint(), key);
+        missionManager.route.currentPoint.f = key;
       }
       if (key === "o") {
-        menu2.toggleOverlay();
+        missionManager.settings.toggleShowOverlay();
       }
       if (key === "i") {
-        menu2.toggleInfo();
+        missionManager.settings.toggleShowInfo();
       }
       if (key === "p") {
-        LoadPreviousSavedPoints(route2, menu2);
+        loadPointsFromSave();
       }
       if (key === "q") {
-        route2.wipePoints();
+        missionManager.route.wipePoints();
       }
-      menu2.updatePoints(route2);
-    };
-    container2.onkeydown = function(e) {
-      let key = e.key;
-      const route2 = getCurrentRoute();
-      if (key === "ArrowLeft") {
-        route2.movePoint("left");
-      }
-      if (key === "ArrowRight") {
-        route2.movePoint("right");
-      }
+      menu.refresh();
+    }
+    //----------------------------------------------------------
+    keyDown(event) {
+      const key = event.key;
       if (key === "ArrowUp") {
-        route2.movePoint("up");
+        missionManager.route.moveCurrentPoint("up");
       }
       if (key === "ArrowDown") {
-        route2.movePoint("down");
+        missionManager.route.moveCurrentPoint("down");
       }
-      menu2.updatePoints(route2);
-    };
-  }
+      if (key === "ArrowLeft") {
+        missionManager.route.moveCurrentPoint("left");
+      }
+      if (key === "ArrowRight") {
+        missionManager.route.moveCurrentPoint("right");
+      }
+      menu.refresh();
+    }
+  };
+  var keyboard = new Keyboard();
 
   // src/main.js
-  var container = document.getElementById("viewport");
-  var canvas = new Canvas(container);
-  var menu = new Menu();
-  var route = new Route();
-  menu.selectRoute(route);
-  initMouse(canvas, menu);
-  initKeyboard(container, menu);
+  console.log(missionManager.createMission());
+  menu.initEvents();
+  mouse.initEvents();
+  keyboard.initEvents();
   document.getElementById("button").addEventListener("click", () => {
     document.getElementById("menu").classList.toggle("hiddenmenu");
     canvas.resize();
   });
   function loop() {
     canvas.resize();
-    drawPoints(route, canvas);
-    drawLines(route, canvas);
-    drawOverlay(menu.settings, route, canvas);
-    drawInfo(menu.settings, route, canvas);
+    drawPoints();
+    drawSelect();
+    drawLines();
+    drawAngles();
+    drawTurns();
+    drawDistances();
+    drawDirections();
+    drawFunctions();
+    drawOverlay();
   }
-  document.body.onload = function() {
+  document.body.onload = () => {
     setInterval(loop, 1e3 / 60);
   };
 })();

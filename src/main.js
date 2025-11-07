@@ -1,33 +1,20 @@
-/* global document, setInterval */
-
 //------------------------------------------------------------
 // IMPORTS
 //------------------------------------------------------------
-import { Canvas } from "./canvas.js"
-import { Menu } from "./menu.js"
-import { Route } from "./routes.js"
-
-import { drawPoints, drawLines, drawOverlay, drawInfo } from "./draw.js"
-
-import { initMouse } from "./mouse.js"
-import { initKeyboard } from "./keyboard.js"
+import { drawPoints, drawSelect, drawLines, drawAngles, drawTurns, drawDistances, drawDirections, drawFunctions, drawOverlay } from "./display.js"
+import { missionManager } from "./manager.js"
+import { canvas } from "./canvas.js"
+import { mouse } from "./mouse.js"
+import { menu } from "./menu.js"
+import { keyboard } from "./keyboard.js"
 
 //------------------------------------------------------------
-// GLOBALS
+// INIT
 //------------------------------------------------------------
-const container = document.getElementById("viewport");
-const canvas = new Canvas(container);
-
-const menu = new Menu();
-
-const route = new Route();
-menu.selectRoute(route);
-
-initMouse(canvas, menu);
-initKeyboard(container, menu);
-
-// Hide Menu
-//------------------------------------------------------------
+console.log(missionManager.createMission());
+menu.initEvents();
+mouse.initEvents();
+keyboard.initEvents();
 
 document.getElementById("button").addEventListener("click", () => {
   document.getElementById("menu").classList.toggle("hiddenmenu"); canvas.resize();
@@ -39,12 +26,21 @@ document.getElementById("button").addEventListener("click", () => {
 function loop () {
   canvas.resize();
 
-  drawPoints(route, canvas);
-  drawLines(route, canvas);
-  drawOverlay(menu.settings, route, canvas);
-  drawInfo(menu.settings, route, canvas);
+  // console.log(missionManager);
+  
+  drawPoints();
+  drawSelect();
+  drawLines();
+  drawAngles();
+  drawTurns();
+  drawDistances();
+  drawDirections();
+  drawFunctions();
+  drawOverlay();
 }
 
-document.body.onload = function () {
+document.body.onload = () => {
   setInterval(loop, 1000/60);
 }
+
+//------------------------------------------------------------
