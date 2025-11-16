@@ -4,8 +4,8 @@
     constructor() {
       this._image = new Image();
       this._image.src = "mission.png";
-      this._width = 2362;
-      this._height = 1143;
+      this._width = 3657 / 2;
+      this._height = 3657 / 2;
     }
     //----------------------------------------------------------
     get image() {
