@@ -1,68 +1,79 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html>
   <head>
-    
-    <title>Mission Viewer V3</title>
+
+    <title>Mission Viewer</title>
 
     <link rel="stylesheet" href="styles.css">
     
   </head>
   <body>
 
-    <div id="viewport" tabindex="0">
-      <canvas id="canvas"></canvas>
-      <div id="button"></div>
-    </div>
+    <section id="tablist">
+      <!-- Tablist elements-->
+    </section>
 
-    <div id="menu">
-      <!-- the best menu ever -->
-      <a href="https://github.com/Eee0001/robotics-route-planner" target="_blank"><h1 id="title">Mission Viewer V3</h1></a>
+    <section id="viewport">
+      <!-- Viewport elements-->
+      <canvas id="canvas"></canvas> <div id="button"></div>
+    </section>
+    
+    <section id="menu">
+      <!-- Menu elements-->
+      <label for="PointX"> Point X Coordinate : </label>
+      <input class="number" type="number" id="PointX">
+      
+      <br>
+      
+      <label for="PointY"> Point Y Coordinate : </label>
+      <input class="number" type="number" id="PointY">
+      
+      <br>
+      
+      <label for="PointD"> Point Direction    : F</label>
+      <input class="radio" type="radio" id="PointD" name="PointD">
+      
+      <label for="PointDB">B</label>
+      <input class="radio" type="radio" id="PointDB" name="PointD">
+      
+      <br>
+      
+      <label for="PointF"> Point Function     : </label>
+      <input class="number" type="number" id="PointF">
+      
+      <div class="line"></div>
 
-      <form id="point">
-        <label for="PointX"> Point X Coordinate : </label>
-        <input class="number" type="number" id="PointX"><br>
-        
-        <label for="PointY"> Point Y Coordinate : </label>
-        <input class="number" type="number" id="PointY"><br>
-        
-        <label for="PointD"> Point Direction    : </label>
-        <label for="F">F</label>
-        <input type="radio" id="F" name="PointD">
-        <label for="B">B</label>
-        <input type="radio" id="B" name="PointD"><br>
-        
-        <label for="PointF"> Point Function     : </label>
-        <input class="number" type="number" id="PointF">
-      </form>
+      <label for="RobotW"> Robot Width   : </label>
+      <input class="number" type="number" id="RobotW">
 
-      <form id="settings">
-        <label for="RobotW"> Robot Width   : </label>
-        <input class="number" type="number" id="RobotW"><br>
-        
-        <label for="Overlay"> Robot Overlay : </label>
-        <input class="check" type="checkbox" id="Overlay"><br>
+      <br>
 
-        <label for="Info"> Show Information : </label>
-        <input class="check" type="checkbox" id="Info">
-      </form>
+      <label for="ShowO"> Robot Overlay : </label>
+      <input class="check" type="checkbox" id="ShowO">
 
-      <form id="route">
-        <label for="RouteC"> Export Route : </label>
-        <input class="button1" type="button" id="RouteD" value="Download"><a class="hide" id="RouteL" download="Robot-Route"></a>
-        <input class="button2" type="button" id="RouteC" value="Copy"><br>
-      </form>
+      <br>
 
-      <form id="points">
-        <label for="PointsC"> Export Points : </label>
-        <input class="button1" type="button" id="PointsD" value="Download"><a class="hide" id="PointsL" download="Points"></a>
-        <input class="button2" type="button" id="PointsC" value="Copy"><br>
-        
-        <label for="PointsT"> Import Points : </label>
-        <textarea class="text" id="PointsT"></textarea>
-        <input class="button2" type="button" id="PointsI" value="File" accept=".json,application/json">
-        <input class="hidden" type="file" id="PointsF">
-      </form>
-    </div>
+      <label for="ShowI"> Show Information : </label>
+      <input class="check" type="checkbox" id="ShowI">
+
+      <div class="line"></div>
+
+      <label for="ExportR"> Export Route : </label>
+      <input class="button" type="button" id="ExportR" value="Download">
+
+      <br>
+
+      <label for="ExportP"> Export Points : </label>
+      <input class="button" type="button" id="ExportP" value="Download">
+
+      <div class="line"></div>
+
+      <label for="ImportP"> Import Points : </label>
+      <input class="button" type="button" id="ImportP" value="File">
+
+      <input class="hidden" type="file" id="FileI" accept=".json,application/json">
+      
+    </section>
 
     <script src="js/main.js"></script>
     

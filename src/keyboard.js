@@ -19,8 +19,15 @@ class Keyboard {
   //----------------------------------------------------------
 
   initEvents () {
-    canvas.container.onkeyup = (e)=>{this.keyUp(e);};
-    canvas.container.onkeydown = (e)=>{this.keyDown(e);};
+    // canvas.container.onkeyup = (e)=>{this.keyUp(e);};
+    // canvas.container.onkeydown = (e)=>{this.keyDown(e);};
+
+    document.body.onkeyup = (e)=>{
+      if (e.target === document.body) { this.keyUp(e); }
+    };
+    document.body.onkeydown = (e)=>{
+      if (e.target === document.body) { this.keyDown(e); }
+    };
   }
 
   //----------------------------------------------------------
