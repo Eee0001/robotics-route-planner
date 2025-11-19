@@ -17,7 +17,7 @@ mouse.initEvents();
 keyboard.initEvents();
 
 document.getElementById("button").addEventListener("click", () => {
-  document.getElementById("menu").classList.toggle("hiddenmenu"); canvas.resize();
+  document.getElementById("menu").classList.toggle("hidden"); canvas.resize();
 });
 
 //------------------------------------------------------------

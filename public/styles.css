@@ -1,6 +1,5 @@
 body {
   position: absolute;
-  display: block;
   
   margin: 0px;
 
@@ -14,183 +13,132 @@ body {
   overflow: hidden;
 }
 
-canvas {
-  background-color: #202020;
+section {
+  border: 0.5px solid #303030;
+  box-sizing: border-box;
 }
 
-#viewport {
+#canvas {
   position: absolute;
-  display: flex;
-  
-  justify-content: center;
-  align-items: center;
-
-  float: left;
-  
-  width: 70vw;
-  height: 100vh;
-
-  background-color: #101010;
-
-  user-select: none;
-  outline: none;
-}
-
-#menu {
-  display: block;
-
-  float: right;
-
-  color: #606060;
-  font-family: "Lucida Console", "Courier New", monospace;
-  
-  width: 30vw;
-  height: 100vh;
-
   background-color: #202020;
-}
-
-#viewport:has(~ #menu.hiddenmenu) {
-  width: 100vw;
-}
-
-.hiddenmenu {
-  width: 0vw;
-  display: none !important;
-}
-
-#button:hover {
-  background-color: #303030;
 }
 
 #button {
   position: absolute;
-
-  border: 0.5px solid #303030;
-  box-sizing: border-box;
 
   top: 1vmin;
   right: 1vmin;
 
   width: 4vmin;
   height: 4vmin;
+
+  border: 0.5px solid #303030;
+  box-sizing: border-box;
 }
 
-h1 {
+#viewport {
   position: relative;
+  
   display: flex;
 
-  box-sizing: border-box;
-
-  margin: 0px;
+  float: left;
 
   justify-content: center;
   align-items: center;
-  
-  text-align: center;
-  font-size: 1.5vw;
 
-  width: 30vw;
-  height: 10vh;
+  width: 70vw;
+  height: 95vh;
 
-  border-bottom: 2px solid #303030;
+  background-color: #101010;
 }
 
-#title {
-  color: #606060;
-  font-family: "Lucida Console", "Courier New", monospace;
-}
-
-a {
-  text-decoration: none;
-}
-
-form {
+#menu {
   position: relative;
+  
   display: block;
 
-  box-sizing: border-box;
+  padding: 2vh 2vw;
 
-  margin: 0px;
+  line-height: 6.25vh;
 
-  padding-top: 2vh;
-  padding-bottom: 2vh;
-
-  padding-left: 2vw;
-  padding-right: 2vw;
-  
-  font-size: 1.25vw;
-  line-height: 6.5vh;
+  float: right;
 
   width: 30vw;
-  height: 30vh;
+  height: 95vh;
 
-  border-bottom: 2px solid #303030;
+  overflow: hidden;
+
+  background-color: #202020;
 }
-
-#point { height: 30vh; }
-
-#settings { 
-  height: calc(23.5vh + 7.5vh); 
-
-  line-height: 9vh;
-}
-
-#route { height: 10.75vh; }
-#points { height: 18.25vh; }
 
 label {
-  white-space: pre;
-}
+  font-family: "Lucida Console", "Courier New", monospace;
 
-legend {
+  font-size: 1vw;
+  
+  color: #606060;
+
+  vertical-align: middle;
+
   white-space: pre;
 }
 
 .number {
-  text-align: center;
+  display: inline-block;
+  
+  font-family: "Lucida Console", "Courier New", monospace;
+  
+  font-size: 1vw;
+  
   width: 8vw;
 }
 
 input[type=number]::-webkit-inner-spin-button {
-    opacity: 1;
+  opacity: 1;
 }
 
 .check {
+  transform: scale(calc(1vw / 10px));
+}
+
+.radio {
+  transform: scale(calc(1vw / 10px));
+}
+
+.button {
+  font-family: "Lucida Console", "Courier New", monospace;
+  
+  font-size: 1vw;
+
+  width: 8vw;
+}
+
+.line {
+  margin: 4vh 0vw;
+  border: 2px solid #303030;
+
+  box-sizing: border-box;
+}
+
+#tablist {
   position: relative;
-
-  top: 4px;
-  left: -4px;
   
-  width: 16px;
-  height: 16px;
+  display: block;
+
+  width: 100vw;
+  height: 5vh;
+
+  background-color: #101010;
 }
 
-.text {
-  position: relative;
-  
-  resize: none;
-
-  top: 4px;
-  
-  width: 6.5vw;
-  height: 16px;
-}
-
-.hide {
-  display: none;
-}
-
-.button1 {
-  font-size: 1.25vw;
-  width: 7vw;
-}
-
-.button2 {
-  font-size: 1.25vw;
-  width: 4.5vw;
+#viewport:has(~ #menu.hidden) {
+  width: 100vw;
 }
 
 .hidden {
   display: none;
+}
+
+#button:hover {
+  background-color: #303030;
 }
