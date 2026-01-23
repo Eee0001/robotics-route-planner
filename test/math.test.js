@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { radToDeg, degToRad, getDistance, getAngle, flipAngle, getTurn } from '../src/math.js';
 
 describe('Math Functions', () => {

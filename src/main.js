@@ -1,6 +1,7 @@
 //------------------------------------------------------------
 // IMPORTS
 //------------------------------------------------------------
+import './css/styles.css'
 import { drawPoints, drawSelect, drawLines, drawAngles, drawTurns, drawDistances, drawDirections, drawFunctions, drawOverlay } from "./display.js"
 import { missionManager } from "./manager.js"
 import { canvas } from "./canvas.js"

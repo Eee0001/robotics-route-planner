@@ -4,8 +4,6 @@
 
     <title>Mission Viewer</title>
 
-    <link rel="stylesheet" href="styles.css">
-    
   </head>
   <body>
 
@@ -17,30 +15,30 @@
       <!-- Viewport elements-->
       <canvas id="canvas"></canvas> <div id="button"></div>
     </section>
-    
+
     <section id="menu">
       <!-- Menu elements-->
       <label for="PointX"> Point X Coordinate : </label>
       <input class="number" type="number" id="PointX">
-      
+
       <br>
-      
+
       <label for="PointY"> Point Y Coordinate : </label>
       <input class="number" type="number" id="PointY">
-      
+
       <br>
-      
+
       <label for="PointD"> Point Direction    : F</label>
       <input class="radio" type="radio" id="PointD" name="PointD">
-      
+
       <label for="PointDB">B</label>
       <input class="radio" type="radio" id="PointDB" name="PointD">
-      
+
       <br>
-      
+
       <label for="PointF"> Point Function     : </label>
       <input class="number" type="number" id="PointF">
-      
+
       <div class="line"></div>
 
       <label for="RobotW"> Robot Width   : </label>
@@ -72,10 +70,10 @@
       <input class="button" type="button" id="ImportP" value="File">
 
       <input class="hidden" type="file" id="FileI" accept=".json,application/json">
-      
+
     </section>
 
-    <script src="js/main.js"></script>
-    
+    <script type="module" src="/src/main.js"></script>
+
   </body>
 </html>
