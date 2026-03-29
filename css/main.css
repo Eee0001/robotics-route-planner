@@ -1,0 +1,340 @@
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+body {
+  position: absolute;
+
+  display:flex;
+  flex-wrap: wrap;
+
+  overflow: hidden;
+  
+  width: 100vw;
+  height: 100vh;
+
+  margin: 0px;
+  padding: 0px;
+
+  background-color: #101010;
+
+  user-select: none;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+#main {
+  position: relative;
+  
+  flex-grow: 1;
+  
+  width: 70vw;
+  height: 100vh;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+#tablist {
+  position: relative;
+
+  display: flex;
+  
+  align-items: center;
+  
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 7vh;
+
+  padding-left: 1vmin;
+
+  background-color: #101010;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+.tab {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  flex-shrink: 1;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  width: 20%;
+  height: 5vh;
+
+  margin-right: 1vmin;
+
+  border-radius: 1vh;
+  border: 2px solid #303030;
+
+  font-family: "Courier New", Courier, monospace;
+  font-size: 2.5vmin;
+  color: #606060;
+  font-weight: bold;
+
+  background-color: #101010;
+}
+
+.tab:hover {
+  background-color: #202020;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+.active {
+  background-color: #202020 !important;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+.tab-action-btn {
+  display: flex;
+  flex-shrink: 0;
+
+  justify-content: center;
+  align-items: center;
+
+  box-sizing: border-box;
+
+  width: 3vh;
+  height: 5vh;
+
+  border: 1px solid #303030;
+}
+
+.tab-action-btn:hover {
+  background-color: #303030;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+.tab-name {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  flex-grow: 1;
+
+  box-sizing: border-box;
+
+  height: 5vh;
+
+  border: 1px solid #303030;
+}
+
+.tab-name:hover {}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+#add-mission-btn {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  box-sizing: border-box;
+
+  aspect-ratio: 1/1;
+  height: 5vh;
+
+  margin: 0px 1vmin 0px auto;
+
+  border-radius: 5vh;
+  border: 2px solid #303030;
+
+  font-family: "Courier New", Courier, monospace;
+  font-size: 4vh;
+  color: #303030;
+  font-weight: bold;
+
+  background-color: #101010;
+}
+
+#add-mission-btn:hover {
+  color: #606060;
+  background-color: #303030;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+#viewport {
+  position: relative;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 93vh;
+
+  background-color: #101010;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+canvas {
+  position: absolute;
+
+  display: block;
+
+  background-color: #202020;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+#menu {
+  position: relative;
+
+  display: grid;
+  grid-template-rows: repeat(13, 1fr);
+
+  align-items: center;
+
+  flex:  0 1 30%;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  width: 30vw;
+  height: 100vh;
+
+  padding: 4vh 0px;
+
+  background-color: #202020;
+
+  white-space: nowrap;
+
+  transition: flex 0.5s cubic-bezier(0.75, 0, 0, 0.95);
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+#menu > label {
+  grid-column: 1;
+}
+
+#menu > input {
+  grid-column: 2;
+}
+
+#menu > hr {
+  grid-column: 1 / span 2;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+#toggle-menu-btn {
+  position: absolute;
+
+  top: 1vmin;
+  right: 1vmin;
+
+  box-sizing: border-box;
+  
+  width: 5vh;
+  height: 5vh;
+
+  border: 2px solid #303030;
+
+  background-color: #101010;
+}
+
+#toggle-menu-btn:hover {
+  background-color: #303030;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+.hidden {
+  flex: 0 1 0% !important;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+label {
+  margin-left: 3.5vw;
+
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1vw;
+
+  color: #606060;
+
+  white-space: pre;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+hr {
+  margin: 2vh 2vw;
+  border: 1px solid #303030;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+input[type="number"] {
+  width: 8vw;
+
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1vw;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  opacity: 1;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+select {
+  width: 8vw;
+
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1vw;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
+input[type="button"] {
+  width: 8vw;
+
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1vw;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/

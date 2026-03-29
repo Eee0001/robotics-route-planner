@@ -2,78 +2,88 @@
 <html>
   <head>
 
-    <title>Mission Viewer</title>
+    <title>Robot Route Planner V.4.06</title>
 
+    <link rel="stylesheet" href="css/main.css">
+    
   </head>
   <body>
 
-    <section id="tablist">
-      <!-- Tablist elements-->
-    </section>
+    <section id="main">
+      
+      <section id="tablist">
+        <div id="add-mission-btn">＋</div>
+      </section>
 
-    <section id="viewport">
-      <!-- Viewport elements-->
-      <canvas id="canvas"></canvas> <div id="button"></div>
+      <section id="viewport">
+        <canvas id="canvas"></canvas> <div id="toggle-menu-btn"></div>
+      </section>
+      
     </section>
 
     <section id="menu">
-      <!-- Menu elements-->
-      <label for="PointX"> Point X Coordinate : </label>
-      <input class="number" type="number" id="PointX">
-
-      <br>
-
-      <label for="PointY"> Point Y Coordinate : </label>
-      <input class="number" type="number" id="PointY">
-
-      <br>
-
-      <label for="PointD"> Point Direction    : F</label>
-      <input class="radio" type="radio" id="PointD" name="PointD">
-
-      <label for="PointDB">B</label>
-      <input class="radio" type="radio" id="PointDB" name="PointD">
-
-      <br>
-
-      <label for="PointF"> Point Function     : </label>
-      <input class="number" type="number" id="PointF">
-
-      <div class="line"></div>
-
-      <label for="RobotW"> Robot Width   : </label>
-      <input class="number" type="number" id="RobotW">
-
-      <br>
-
-      <label for="ShowO"> Robot Overlay : </label>
-      <input class="check" type="checkbox" id="ShowO">
-
-      <br>
-
-      <label for="ShowI"> Show Information : </label>
-      <input class="check" type="checkbox" id="ShowI">
-
-      <div class="line"></div>
-
-      <label for="ExportR"> Export Route : </label>
-      <input class="button" type="button" id="ExportR" value="Download">
-
-      <br>
-
-      <label for="ExportP"> Export Points : </label>
-      <input class="button" type="button" id="ExportP" value="Download">
-
-      <div class="line"></div>
-
-      <label for="ImportP"> Import Points : </label>
-      <input class="button" type="button" id="ImportP" value="File">
-
-      <input class="hidden" type="file" id="FileI" accept=".json,application/json">
-
+      <label for="PointX">Point X Coordinate :</label>
+      <input id="PointX" type="number">
+      
+      <label for="PointY">Point Y Coordinate :</label>
+      <input id="PointY" type="number">
+      
+      <label for="PointD">Point Direction    :</label>
+      <select id="PointD">
+        <option value="1">Forwards</option>
+        <option value="-1">Backwards</option>
+      </select>
+      
+      <label for="PointA">Point Action       :</label>
+      <input id="PointA" type="number">
+      
+      <hr>
+      
+      <label for="RobotA">Starting Angle     :</label>
+      <input id="RobotA" type="number">
+      
+      <label for="RobotW">Robot Width        :</label>
+      <input id="RobotW" type="number">
+      
+      <label for="ShowO">Show Overlay       :</label>
+      <input id="ShowO" type="checkbox">
+      
+      <label for="ShowI">Show Information   :</label>
+      <input id="ShowI" type="checkbox">
+      
+      <hr>
+      
+      <label for="ExportR">Export Route       :</label>
+      <input id="ExportR" type="button" value="Download">
+      
+      <label for="ExportM">Export Mission     :</label>
+      <input id="ExportM" type="button" value="Download">
+      
+      <label for="ImportM">Import Mission     :</label>
+      <input id="ImportM" type="button" value="File">
     </section>
 
-    <script type="module" src="/src/main.js"></script>
-
+    <!-- SCRIPTS -->
+    <script src="js/math.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/mouse.js"></script>
+    <script src="js/keyboard.js"></script>
+    <script src="js/fields.js"></script>
+    <script src="js/routes.js"></script>
+    <script src="js/configs.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/missions.js"></script>
+    <script src="js/tabs.js"></script>
+    <script src="js/tablist.js"></script>
+    <script src="js/manager.js"></script>
+    <script src="js/planner.js"></script>
+    <script src="js/display.js"></script>
+    <script src="js/inputs.js"></script>
+    <script src="js/menu.js"></script>
+    <!-- SRIPTS -->
+    
+    <script src="js/main.js"></script>
+    
   </body>
 </html>
