@@ -5,76 +5,36 @@
 //--------------------------------------------------------------------------------
 // INIT
 //--------------------------------------------------------------------------------
-const BUTTON = document.getElementById("button");
-const MENU = document.getElementById("menu");
 
-BUTTON.onclick = ()=>{ MENU.classList.toggle("hidden"); };
+initInputEvents(mouse, keyboard, missionManager);
 
-//--------------------------------------------------------------------------------
+menu.initEvents(missionManager);
 
-mouse.onMouseUp = (event) => {
-  const route = missionManager.currentMission.route;
-  route.holdingPoint = null;
-}
 
-//--------------------------------------------------------------------------------
+missionManager.loadFromLocalStorage();
 
-mouse.onMouseDown = (event) => {
-  const route = missionManager.currentMission.route;
-  
-  for (let point of route.points) {
-    if (getDistance(point, mouse.position) <= 25) {
-      route.currentPoint = point;
-      route.holdingPoint = point;
-    }
-  }
-  if (!route.holdingPoint) {
-    const point = route.createPoint(mouse.x, mouse.y);
 
-    route.currentPoint = point;
-    route.holdingPoint = point;
-  }
-}
+window.onbeforeunload = () => {
+  missionManager.saveToLocalStorage();
+};
 
-//--------------------------------------------------------------------------------
-
-mouse.onMouseMove = (event) => {
-  const route = missionManager.currentMission.route;
-  
-  if (route.holdingPoint) {
-    route.holdingPoint.x = mouse.x;
-    route.holdingPoint.y = mouse.y;
-  }
-}
-
-//--------------------------------------------------------------------------------
-
-keyboard.onKeyUp = (event)=>{
-  
-}
-
-//--------------------------------------------------------------------------------
-
-// keyboard.setKeyEventUp("w", (e)=>{});
-// keyboard.setKeyEventDown("ArrowLeft", (e)=>{});
+setInterval(() => {
+  missionManager.saveToLocalStorage();
+}, 5000);
 
 //--------------------------------------------------------------------------------
 // LOOP
 //--------------------------------------------------------------------------------
+
 function loop () {
   canvas.resize(); 
   mouse.scale = canvas.scale;
-
-  const currentMission = missionManager.currentMission;
   
-  drawField(canvas, currentMission.field);
+  drawMission(canvas, missionManager.currentMission);
 
-  drawPoints(canvas, currentMission.route);
-  drawLines(canvas, currentMission.route);
-  drawSelect(canvas, currentMission.route);
-
-  drawInfo(canvas, currentMission.route, currentMission.settings);
-  drawOverlay(canvas, currentMission.route, currentMission.settings);
+  menu.refresh(missionManager);
+  
+  requestAnimationFrame(loop);
 }
 
-document.body.onload = ()=>{ setInterval(loop, 20); };
+document.body.onload = ()=>{ requestAnimationFrame(loop); };

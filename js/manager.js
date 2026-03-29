@@ -8,66 +8,121 @@
 
 class MissionManager {
 
+  #currentMission; #missions; #trash;
+
   constructor () {
-    this._currentMission = null;
-    
-    this._missions = [];
-    this._trash = [];
+    this.#currentMission = null;
+
+    this.#missions = [];
+    this.#trash = [];
+
+    this.createMission();
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
-  get currentMission () { return this._currentMission }
+  get currentMission () { return this.#currentMission; }
+
+  get missions () { return this.#missions; }
+
+  //--------------------------------------
+
+  get currentField () { 
+    return this.#currentMission?.field; 
+  }
   
-  get missions () { return this._missions }
+  get currentRoute () { 
+    return this.#currentMission?.route; 
+  }
+  
+  get currentConfig () { 
+    return this.#currentMission?.config; 
+  }
+  
+  get currentSettings () { 
+    return this.#currentMission?.settings; 
+  }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
   createMission () {
     const mission = new Mission();
-    this._missions.push(mission);
+    this.#missions.push(mission);
 
-    this.selectMission(mission);
+    this.#currentMission = mission;
 
     return mission;
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
   deleteMission (mission) {
-    if (this._missions.length > 0) {
-      const index = this._missions.indexOf(mission);
-      this._missions.splice(index, 1);
-      
-      this._trash.push(mission);
-      
-      this.selectMission(this._missions[0]);
-    }
+    if (this.#missions.length < 1) return;
+
+    const index = this.#missions.indexOf(mission);
+    this.#missions.splice(index, 1);
+
+    this.#trash.push(mission);
+
+    this.#currentMission = this.#missions[0];
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
   restoreMission () {
-    if (this._trash.length > 0) {
-      this._missions.push(this._trash.pop());
-      
-      this.selectMission(this._missions[0]);
+    if (this.#trash.length < 1) return;
+
+    this.#missions.push(this.#trash.pop());
+  }
+
+  //--------------------------------------
+
+  reset (createMission = false) {
+    this.#currentMission = null;
+
+    this.#missions = [];
+    this.#trash = [];
+
+    if (createMission) {
+      this.createMission();
     }
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
-  reset () {
-    this._currentMission = null;
-    
-    this._missions = [];
-    this._trash = [];
+  saveToLocalStorage () {
+    localStorage.setItem("missions", JSON.stringify(this.#missions));
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
-  selectMission (mission) {
-    this._currentMission = mission;
+  loadFromLocalStorage () {
+    const rawData = localStorage.getItem("missions");
+
+    try {
+      const data = JSON.parse(rawData);
+
+      this.loadData(data);
+    }
+    catch {
+      console.warn("Incomplete missions data loaded");
+    }
+  }
+
+  //--------------------------------------
+
+  loadData (data) {
+    if (!data) return;
+
+    this.reset(false);
+
+    for (let mission of data) {
+      this.createMission().loadData(mission);
+    }
+
+    if (this.#missions.length < 1) {
+      this.createMission();
+    }
   }
   
 }
@@ -77,6 +132,5 @@ class MissionManager {
 //--------------------------------------------------------------------------------
 
 const missionManager = new MissionManager();
-missionManager.createMission();
 
 //--------------------------------------------------------------------------------

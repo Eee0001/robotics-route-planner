@@ -8,90 +8,122 @@
 
 class Route {
 
-  constructor () {
-    this._currentPoint = null;
-    this._holdingPoint = null;
-    
-    this._points = [];
-    this._trash = [];
+  #currentPoint; #holdingPoint; #points; #trash;
 
-    this._startingAngle = 0;
+  constructor () {
+    this.#currentPoint = null;
+    this.#holdingPoint = null;
+
+    this.#points = [];
+    this.#trash = [];
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
-  get currentPoint () { return this._currentPoint; }
-  set currentPoint (point) { this._currentPoint = point; }
+  get currentPoint () { return this.#currentPoint; }
+  set currentPoint (point) { this.#currentPoint = point; }
 
-  get holdingPoint () { return this._holdingPoint; }
-  set holdingPoint (point) { this._holdingPoint = point; }
+  get holdingPoint () { return this.#holdingPoint; }
+  set holdingPoint (point) { this.#holdingPoint = point; }
 
-  get points () { return this._points; }
-  set points (points) { this._points = points; }
+  get points () { return this.#points; }
 
-  get startingAngle () { return this._startingAngle; }
-  set startingAngle (angle) { this._startingAngle = angle; }
-  
-  //------------------------------------------------------------------------------
-  
+  //--------------------------------------
+
   createPoint (x, y, d = 1, a = 0) {
     const point = {x, y, d, a};
-    this._points.push(point);
+    this.#points.push(point);
 
-    this._currentPoint = point;
+    this.#currentPoint = point;
 
     return point;
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
   deletePoint () {
-    if (this._points.length > 0) {
-      this._trash.push(this._points.pop());
-      
-      this._currentPoint = null;
-      this._holdingPoint = null;
-    }
+    if (this.#points.length < 1) return;
+
+    this.#trash.push(this.#points.pop());
+
+    this.#currentPoint = null;
+    this.#holdingPoint = null;
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
   restorePoint () {
-    if (this._trash.length > 0) {
-      this._points.push(this._trash.pop());
-  
-      this._currentPoint = null;
-      this._holdingPoint = null;
-    }
+    if (this.#trash.length < 1) return;
+
+    this.#points.push(this.#trash.pop());
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
-  reset () {
-    this._points = [];
-    this._trash = [];
-
-    this._currentPoint = null;
-    this._holdingPoint = null;
-  }
-
-  //------------------------------------------------------------------------------
-
-  movePoints (direction) {
-    if (!this._currentPoint) return;
+  movePoint (direction) {
+    if (!this.#currentPoint) return;
 
     if (direction === "up") {
-      this._currentPoint.y -= 10;
+      this.#currentPoint.y -= 10;
     }
     if (direction === "down") {
-      this._currentPoint.y += 10;
+      this.#currentPoint.y += 10;
     }
     if (direction === "left") {
-      this._currentPoint.x -= 10;
+      this.#currentPoint.x -= 10;
     }
     if (direction === "right") {
-      this._currentPoint.x += 10;
+      this.#currentPoint.x += 10;
     }
+  }
+
+  //--------------------------------------
+
+  grabPoint (position) {
+    const point = this.#points.find((p)=>{ 
+      return getDistance(p, position) <= 25; 
+    });
+
+    if (point) {
+      this.#currentPoint = point;
+      this.#holdingPoint = point;
+      
+      return point;
+    }
+  }
+
+  //--------------------------------------
+
+  reset () {
+    this.#currentPoint = null;
+    this.#holdingPoint = null;
+
+    this.#points = [];
+    this.#trash = [];
+  }
+
+  //--------------------------------------
+
+  toJSON () {
+    const keys = ["points"];
+
+    const serialisedData = {};
+
+    for (let key of keys) { 
+      serialisedData[key] = this[key]; 
+    }
+    
+    return serialisedData;
+  }
+
+  //--------------------------------------
+
+  loadData (data) {
+    if (!data) return;
+
+    this.reset();
+
+    if (data.points) this.#points = data.points;
   }
   
 }

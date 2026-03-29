@@ -8,69 +8,75 @@
 
 class Mouse {
 
+  #x; #y; #onMouseUp; #onMouseDown; #onMouseMove; #scale;
+
   constructor () {
-    this._scale = 1;
+    this.#x = 0;
+    this.#y = 0;
+
+    this.#onMouseUp = null;
+    this.#onMouseDown = null;
+    this.#onMouseMove = null;
+
+    this.#scale = 1;
+
+    this.#initEvents();
+  }
+
+  //--------------------------------------
+
+  get position () { return { x: this.#x, y: this.#y } }
+
+  get x () { return this.#x; }
+  get y () { return this.#y; }
+
+  get onMouseUp () { return this.#onMouseUp; }
+  set onMouseUp (func) { this.#onMouseUp = func; }
+
+  get onMouseDown () { return this.#onMouseDown; }
+  set onMouseDown (func) { this.#onMouseDown = func; }
+
+  get onMouseMove () { return this.#onMouseMove; }
+  set onMouseMove (func) { this.#onMouseMove = func; }
+
+  get scale () { return this.#scale; }
+  set scale (scale) { this.#scale = scale; }
+
+  //--------------------------------------
+
+  #initEvents () {
+    document.body.onmouseup = (e) => { this.#upEvent(e); };
+
+    const canvas = document.getElementById("canvas");
+
+    canvas.onmousedown = (e) => { this.#downEvent(e); };
     
-    this._x = 0;
-    this._y = 0;
-
-    this._onMouseMove = null;
-    this._onMouseUp = null;
-    this._onMouseDown = null;
-
-    this.initEvents();
+    canvas.onmousemove = (e) => { this.#moveEvent(e); };
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
-  get position () { return { x: this._x, y: this._y }; }
-  
-  get x () { return this._x; }
-  set x (x) { this._x = x / this._scale; }
+  #upEvent (event) {
+    if (document.activeElement !== document.body) return;
+    if (this.#onMouseUp) this.#onMouseUp(event);
+  }
 
-  get y () { return this._y; }
-  set y (y) { this._y = y / this._scale; }
+  //--------------------------------------
 
-  set scale (scale) { this._scale = scale; }
-  
-  set onMouseUp (func) { this._onMouseUp = func; }
-  set onMouseDown (func) { this._onMouseDown = func; }
-  set onMouseMove (func) { this._onMouseMove = func; }
-  
-  //------------------------------------------------------------------------------
+  #downEvent (event) {
+    if (document.activeElement !== document.body) return;
+    if (this.#onMouseDown) this.#onMouseDown(event);
+  }
 
-  initEvents () {
-    document.body.onmouseup = (e) => {
-      this.mouseUp(e);
-    };
-    document.getElementById("canvas").onmousedown = (e) => {
-      this.mouseDown(e);
-    };
-    document.getElementById("canvas").onmousemove = (e) => {
-      this.mouseMove(e);
-    };
+  //--------------------------------------
+
+  #moveEvent (event) {
+    if (document.activeElement !== document.body) return;
     
-  }
+    this.#x = Math.round(event.offsetX / this.#scale);
+    this.#y = Math.round(event.offsetY / this.#scale);
 
-  //------------------------------------------------------------------------------
-
-  mouseUp (event) {
-    if (this._onMouseUp) { this._onMouseUp(event); }
-  }
-
-  //------------------------------------------------------------------------------
-
-  mouseDown (event) {
-    if (this._onMouseDown) { this._onMouseDown(event); }
-  }
-
-  //------------------------------------------------------------------------------
-
-  mouseMove (event, route) {
-    this.x = event.offsetX;
-    this.y = event.offsetY;
-    
-    if (this._onMouseMove) { this._onMouseMove(event); }
+    if (this.#onMouseMove) this.#onMouseMove(event);
   }
   
 }

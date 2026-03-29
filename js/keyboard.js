@@ -8,62 +8,69 @@
 
 class Keyboard {
 
+  #keyEventsUp; #keyEventsDown; #onKeyUp; #onKeyDown;
+
   constructor () {
-    this._keyEventsUp = {};
-    this._keyEventsDown = {};
+    this.#keyEventsUp = {};
+    this.#keyEventsDown = {};
+
+    this.#onKeyUp = null;
+    this.#onKeyDown = null;
+
+    this.#initEvents();
+  }
+
+  //--------------------------------------
+
+  get onKeyUp () { return this.#onKeyUp; }
+  set onKeyUp (func) { this.#onKeyUp = func; }
+
+  get onKeyDown () { return this.#onKeyDown; }
+  set onKeyDown (func) { this.#onKeyDown = func; }
+
+  //--------------------------------------
+
+  setKeyEvent (type, key, func) {
+    if (type === "up") this.#keyEventsUp[key] = func;
+    if (type === "down") this.#keyEventsDown[key] = func;
+  }
+
+  //--------------------------------------
+
+  #initEvents () {
+    document.body.onkeyup = (e) => { this.#upEvent(e); };
     
-    this._onKeyUp = null;
-    this._onKeyDown = null;
-
-    this.initEvents();
+    document.body.onkeydown = (e) => { this.#downEvent(e); };
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
-  set onKeyUp (func) { this._onKeyUp = func; }
-  set onKeyDown (func) { this._onKeyDown = func; }
-
-  //------------------------------------------------------------------------------
-
-  setKeyEventUp (key, func) {
-    this._keyEventsUp[key] = func;
-  }
-
-  setKeyEventDown (key, func) {
-    this._keyEventsDown[key] = func;
-  }
-
-  //------------------------------------------------------------------------------
-
-  initEvents () {
-    document.body.onkeyup = (e)=>{ this.keyUp(e); }
-    document.body.onkeydown = (e)=>{ this.keyDown(e); }
-  }
-
-  //------------------------------------------------------------------------------
-
-  keyUp (event) {
+  #upEvent (event) {
+    if (document.activeElement !== document.body) return;
+    
     const key = event.key;
 
-    if (Object.keys(this._keyEventsUp).includes(key)) {
-      this._keyEventsUp[key](event);
+    if (Object.keys(this.#keyEventsUp).includes(key)) {
+      this.#keyEventsUp[key](event);
     }
 
-    if (this._onKeyUp) { this._onKeyUp(event); }
+    if (this.#onKeyUp) this.#onKeyUp(event);
   }
 
-  //------------------------------------------------------------------------------
+  //--------------------------------------
 
-  keyDown (event) {
+  #downEvent (event) {
+    if (document.activeElement !== document.body) return;
+    
     const key = event.key;
 
-    if (Object.keys(this._keyEventsDown).includes(key)) {
-      this._keyEventsDown[key](event);
+    if (Object.keys(this.#keyEventsDown).includes(key)) {
+      this.#keyEventsDown[key](event);
     }
 
-    if (this._onKeyUp) { this._onKeyUp(event); }
+    if (this.#onKeyDown) this.#onKeyDown(event);
   }
-  
+
 }
 
 //--------------------------------------------------------------------------------

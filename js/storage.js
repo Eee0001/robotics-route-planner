@@ -6,38 +6,42 @@
 // METHODS
 //--------------------------------------------------------------------------------
 
-function radToDeg (angle) {
-  return angle * 180 / Math.PI;
+function saveToStorage (key, data) {
+  localStorage.setItem(key, data);
 }
 
 //--------------------------------------
 
-function degToRad (angle) {
-  return angle * Math.PI / 180;
+function loadFromStorage (key) {
+  return localStorage.getItem(key);
 }
 
 //--------------------------------------
 
-function getDistance (p1, p2) {
-  return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+const fileTypes = {
+  text: "plain/text",
+  json: "application/json"
+};
+
+//--------------------------------------
+
+function saveToFile (name, type, data) {
+  let blob = new Blob([data], {type});
+  let url = URL.createObjectURL(blob);
+
+  let element = document.createElement("a");
+  element.setAttribute("download", name);
+  
+  element.href = url;
+  
+  element.click();
+  element.remove();
 }
 
 //--------------------------------------
 
-function getAngle (p1, p2) {
-  return radToDeg(Math.atan2((p2.x - p1.x), (p1.y - p2.y)));
-}
-
-//--------------------------------------
-
-function flipAngle (angle) {
-  return -1 * Math.sign(angle) * (180 - Math.abs(angle));
-}
-
-//--------------------------------------
-
-function getTurn (a1, a2) {
-  return Math.sign((a2 - a1 + 540) % 360 - 180);
+function loadFromFile (file) {
+  
 }
 
 //--------------------------------------------------------------------------------

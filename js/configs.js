@@ -6,39 +6,27 @@
 // CLASS
 //--------------------------------------------------------------------------------
 
-class Settings {
+class RobotConfig {
 
-  #showInfo; #showOverlay;
-
+  #startingAngle; #robotWidth;
+  
   constructor () {
-    this.#showInfo = true;
-    this.#showOverlay = false;
+    this.#startingAngle = 0;
+    this.#robotWidth = 200;
   }
 
   //--------------------------------------
 
-  get showInfo () { return this.#showInfo; }
-  set showInfo (value) { this.#showInfo = value; }
+  get startingAngle () { return this.#startingAngle; }
+  set startingAngle (angle) { this.#startingAngle = angle; }
 
-  get showOverlay () { return this.#showOverlay; }
-  set showOverlay (value) { this.#showOverlay = value; }
-
-  //--------------------------------------
-
-  toggleShowInfo () {
-    this.#showInfo = !this.#showInfo;
-  }
-
-  //--------------------------------------
-
-  toggleShowOverlay () {
-    this.#showOverlay = !this.#showOverlay;
-  }
+  get robotWidth () { return this.#robotWidth; }
+  set robotWidth (width) { this.#robotWidth = width; }
 
   //--------------------------------------
 
   toJSON () {
-    const keys = ["showInfo","showOverlay"];
+    const keys = ["startingAngle","robotWidth"];
 
     const serialisedData = {};
 
@@ -54,11 +42,11 @@ class Settings {
   loadData (data) {
     if (!data) return;
 
-    if (data.showInfo) {
-      this.#showInfo = data.showInfo;
-    }
-    if (data.showOverlay) {
-      this.#showOverlay = data.showOverlay;
+    if (data.startingAngle) {
+      this.#startingAngle = data.startingAngle;
+    } 
+    if (data.robotWidth) {
+      this.#robotWidth = data.robotWidth;
     }
   }
   
