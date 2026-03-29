@@ -34,7 +34,7 @@ function generateInstructions (points, startingAngle) {
     const turn = getTurn(lastAngle, thisAngle);
     path += ""+turn+"\n";
     
-    const angle = Math.round(thisAngle);
+    const angle = Math.round(rotateAngle(thisAngle, -startingAngle));
     path += ""+angle+"\n";
     
     const direction = thisPoint.d;

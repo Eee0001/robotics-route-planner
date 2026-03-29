@@ -36,6 +36,12 @@ function flipAngle (angle) {
 
 //--------------------------------------
 
+function rotateAngle (a1, a2) {
+  return (a1 + a2 + 540) % 360 - 180;
+}
+
+//--------------------------------------
+
 function getTurn (a1, a2) {
   return Math.sign((a2 - a1 + 540) % 360 - 180);
 }

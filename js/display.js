@@ -53,7 +53,7 @@ function drawInfo (canvas, points, startingAngle) {
       thisAngle = flipAngle(thisAngle);
     }
 
-    const angle = Math.round(thisAngle);
+    const angle = Math.round(rotateAngle(thisAngle, -startingAngle));
     canvas.drawText(angle, thisPoint.x, thisPoint.y - 30, "#ff00ff");
 
     const turn = getTurn(lastAngle, thisAngle);

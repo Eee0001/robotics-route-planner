@@ -63,7 +63,7 @@ function initInputEvents (mouse, keyboard, missionManager) {
   });
   
   keyboard.setKeyEvent("up", "p", (e) => {
-    // Load previous session points
+    missionManager.loadFromStorage();
   });
   
   keyboard.setKeyEvent("up", "q", (e) => {
