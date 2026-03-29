@@ -9,57 +9,61 @@
   </head>
   <body>
 
-    <div id="main">
+    <section id="main">
       
       <section id="tablist">
-        <div class="tab"><span class="name">Name</span><div class="options">⋮</div><div class="close">Ｘ</div></div>
-        <div class="tab"><span class="name">Name</span><div class="options">⋮</div><div class="close">Ｘ</div></div>
-        <div class="tab"><span class="name">Name</span><div class="options">⋮</div><div class="close">Ｘ</div></div>
-        <div class="tab"><span class="name">Name</span><div class="options">⋮</div><div class="close">Ｘ</div></div>
-        <div class="tab"><span class="name">Name</span><div class="options">⋮</div><div class="close">Ｘ</div></div>
-        <div class="add">＋</div>
+        <div class="tab"><span class="tab-name">Name</span><div class="tab-action-btn">⋮</div><div class="tab-action-btn">Ｘ</div></div>
+        <div class="tab"><span class="tab-name">Name</span><div class="tab-action-btn">⋮</div><div class="tab-action-btn">Ｘ</div></div>
+        <div class="tab"><span class="tab-name">Name</span><div class="tab-action-btn">⋮</div><div class="tab-action-btn">Ｘ</div></div>
+        <div class="tab"><span class="tab-name">Name</span><div class="tab-action-btn">⋮</div><div class="tab-action-btn">Ｘ</div></div>
+        <div class="tab"><span class="tab-name">Name</span><div class="tab-action-btn">⋮</div><div class="tab-action-btn">Ｘ</div></div>
+        <div id="add-mission-btn">＋</div>
       </section>
 
       <section id="viewport">
-        <canvas id="canvas"></canvas> <div id="button"></div>
+        <canvas id="canvas"></canvas> <div id="toggle-menu-btn"></div>
       </section>
       
-    </div>
+    </section>
 
     <section id="menu">
       <label for="PointX">Point X Coordinate :</label>
       <input id="PointX" type="number">
-      <br>
+      
       <label for="PointY">Point Y Coordinate :</label>
       <input id="PointY" type="number">
-      <br>
+      
       <label for="PointD">Point Direction    :</label>
       <select id="PointD">
         <option value="1">Forwards</option>
         <option value="-1">Backwards</option>
       </select>
-      <br>
+      
       <label for="PointA">Point Action       :</label>
       <input id="PointA" type="number">
+      
       <hr>
+      
       <label for="RobotA">Starting Angle     :</label>
       <input id="RobotA" type="number">
-      <br>
+      
       <label for="RobotW">Robot Width        :</label>
       <input id="RobotW" type="number">
-      <br>
+      
       <label for="ShowO">Show Overlay       :</label>
       <input id="ShowO" type="checkbox">
-      <br>
+      
       <label for="ShowI">Show Information   :</label>
       <input id="ShowI" type="checkbox">
+      
       <hr>
+      
       <label for="ExportR">Export Route       :</label>
       <input id="ExportR" type="button" value="Download">
-      <br>
+      
       <label for="ExportM">Export Mission     :</label>
       <input id="ExportM" type="button" value="Download">
-      <br>
+      
       <label for="ImportM">Import Mission     :</label>
       <input id="ImportM" type="button" value="File">
     </section>

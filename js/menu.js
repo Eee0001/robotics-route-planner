@@ -12,8 +12,8 @@ class Menu {
 
   constructor () {
     this.#ids = [
-      "menu", "button", "PointX", "PointY", "PointD", "PointA", "RobotA", 
-      "RobotW", "ShowI", "ShowO","ExportR", "ExportM", "ImportM"
+      "menu", "toggle-menu-btn", "PointX", "PointY", "PointD", "PointA", 
+      "RobotA", "RobotW", "ShowI", "ShowO","ExportR", "ExportM", "ImportM"
     ];
 
     this.#elements = {};
@@ -86,7 +86,7 @@ class Menu {
       loadFile(".json").then((file)=>{missionManager.uploadMission(file);});
     }
 
-    this.#elements["button"].onclick = ()=>{ 
+    this.#elements["toggle-menu-btn"].onclick = ()=>{ 
       this.#elements["menu"].classList.toggle("hidden"); 
     };
   }
