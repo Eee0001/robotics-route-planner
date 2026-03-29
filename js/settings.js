@@ -38,15 +38,7 @@ class Settings {
   //--------------------------------------
 
   toJSON () {
-    const keys = ["showInfo","showOverlay"];
-
-    const serialisedData = {};
-
-    for (let key of keys) { 
-      serialisedData[key] = this[key]; 
-    }
-    
-    return serialisedData;
+    return serializeObject(this, ["showInfo","showOverlay"]);
   }
 
   //--------------------------------------

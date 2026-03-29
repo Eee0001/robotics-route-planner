@@ -10,16 +10,18 @@ initInputEvents(mouse, keyboard, missionManager);
 
 menu.initEvents(missionManager);
 
+//--------------------------------------
 
-missionManager.loadFromLocalStorage();
+missionManager.loadFromStorage();
 
+//--------------------------------------
 
 window.onbeforeunload = () => {
-  missionManager.saveToLocalStorage();
+  missionManager.saveToStorage();
 };
 
 setInterval(() => {
-  missionManager.saveToLocalStorage();
+  missionManager.saveToStorage();
 }, 5000);
 
 //--------------------------------------------------------------------------------
@@ -37,4 +39,4 @@ function loop () {
   requestAnimationFrame(loop);
 }
 
-document.body.onload = ()=>{ requestAnimationFrame(loop); };
+document.body.onload = () => { requestAnimationFrame(loop); };

@@ -105,15 +105,7 @@ class Route {
   //--------------------------------------
 
   toJSON () {
-    const keys = ["points"];
-
-    const serialisedData = {};
-
-    for (let key of keys) { 
-      serialisedData[key] = this[key]; 
-    }
-    
-    return serialisedData;
+    return serializeObject(this, ["points"]);
   }
 
   //--------------------------------------

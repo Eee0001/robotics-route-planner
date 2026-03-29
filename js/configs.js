@@ -26,15 +26,7 @@ class RobotConfig {
   //--------------------------------------
 
   toJSON () {
-    const keys = ["startingAngle","robotWidth"];
-
-    const serialisedData = {};
-
-    for (let key of keys) { 
-      serialisedData[key] = this[key]; 
-    }
-    
-    return serialisedData;
+    return serializeObject(this, ["startingAngle","robotWidth"]);
   }
 
   //--------------------------------------

@@ -101,6 +101,7 @@ class Canvas {
   //--------------------------------------
 
   drawImage (src, x, y, w, h) {
+    // this.#ctx.imageSmoothingEnabled = false;
     this.#ctx.drawImage(src, x, y, w, h);
   }
   

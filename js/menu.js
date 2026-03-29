@@ -74,10 +74,17 @@ class Menu {
       }
     }
 
-    // this.elements.ExportR.onclick = ()=>{/*download route*/}
-    // this.elements.ExportM.onclick = ()=>{/*download mission*/}
+    this.#elements.ExportR.onclick = ()=>{
+      missionManager.downloadRoute();
+    }
+    
+    this.#elements.ExportM.onclick = ()=>{
+      missionManager.downloadMission();
+    }
 
-    // this.elements.ImportM.onclick = ()=>{/*upload mission*/}
+    this.#elements.ImportM.onclick = ()=>{
+      loadFile(".json").then((file)=>{missionManager.uploadMission(file);});
+    }
 
     this.#elements["button"].onclick = ()=>{ 
       this.#elements["menu"].classList.toggle("hidden"); 

@@ -77,6 +77,42 @@ class MissionManager {
 
   //--------------------------------------
 
+  downloadMission () {
+    saveToFile(
+      this.#currentMission.name, 
+      "application/json", 
+      JSON.stringify(this.#currentMission)
+    );
+  }
+
+  //--------------------------------------
+
+  uploadMission (file) {
+    readFileContent(file).then((rawData) => {
+      try {
+        const data = JSON.parse(rawData);
+        this.#currentMission.loadData(data);
+      }
+      catch {
+        console.warn("Incomplete Mission data loaded");
+      }
+    });
+  }
+  //--------------------------------------
+
+  downloadRoute () {
+    const points = this.#currentMission?.route?.points;
+    const angle = this.#currentMission?.config?.startingAngle;
+    
+    saveToFile(
+      this.#currentMission.name,
+      "text/plain",
+      generateInstructions(points, angle)
+    );
+  }
+
+  //--------------------------------------
+
   reset (createMission = false) {
     this.#currentMission = null;
 
@@ -90,18 +126,17 @@ class MissionManager {
 
   //--------------------------------------
 
-  saveToLocalStorage () {
-    localStorage.setItem("missions", JSON.stringify(this.#missions));
+  saveToStorage () {
+    saveToStorage("missions", JSON.stringify(this.#missions));
   }
 
   //--------------------------------------
 
-  loadFromLocalStorage () {
-    const rawData = localStorage.getItem("missions");
+  loadFromStorage () {
+    const rawData = loadFromStorage("missions");
 
     try {
       const data = JSON.parse(rawData);
-
       this.loadData(data);
     }
     catch {

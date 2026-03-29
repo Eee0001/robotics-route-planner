@@ -11,7 +11,7 @@ class Mission {
   #name; #field; #route; #config; #settings;
 
   constructor () {
-    this.#name = "Robot Mission";
+    this.#name = "RobotMission";
 
     this.#field = new Field();
 
@@ -38,15 +38,7 @@ class Mission {
   //--------------------------------------
 
   toJSON () {
-    const keys = ["name","field","route","config","settings"];
-
-    const serialisedData = {};
-
-    for (let key of keys) { 
-      serialisedData[key] = this[key]; 
-    }
-    
-    return serialisedData;
+    return serializeObject(this, ["name","field","route","config","settings"]);
   }
 
   //--------------------------------------

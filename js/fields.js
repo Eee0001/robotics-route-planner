@@ -51,15 +51,7 @@ class Field {
   //--------------------------------------
 
   toJSON () {
-    const keys = ["src","width","height"];
-
-    const serialisedData = {};
-
-    for (let key of keys) { 
-      serialisedData[key] = this[key]; 
-    }
-    
-    return serialisedData;
+    return serializeObject(this, ["src","width","height"]);
   }
 
   //--------------------------------------
