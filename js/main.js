@@ -9,6 +9,7 @@
 initInputEvents(mouse, keyboard, missionManager);
 
 menu.initEvents(missionManager);
+tablist.initEvents(missionManager);
 
 //--------------------------------------
 
@@ -35,6 +36,7 @@ function loop () {
   drawMission(canvas, missionManager.currentMission);
 
   menu.refresh(missionManager);
+  tablist.refresh(missionManager);
   
   requestAnimationFrame(loop);
 }

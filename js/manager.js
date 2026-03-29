@@ -45,6 +45,12 @@ class MissionManager {
 
   //--------------------------------------
 
+  selectMission (mission) {
+    this.#currentMission = mission;
+  }
+
+  //--------------------------------------
+
   createMission () {
     const mission = new Mission();
     this.#missions.push(mission);
@@ -73,6 +79,20 @@ class MissionManager {
     if (this.#trash.length < 1) return;
 
     this.#missions.push(this.#trash.pop());
+  }
+
+  //--------------------------------------
+
+  changeMissionName (mission) {
+    const name = prompt("Enter mission name");
+    mission.name = name ? name : mission.name;
+    return mission.name;
+  }
+
+  //--------------------------------------
+
+  changeMissionField (mission) {
+    // TODO
   }
 
   //--------------------------------------
@@ -113,7 +133,7 @@ class MissionManager {
 
   //--------------------------------------
 
-  reset (createMission = false) {
+  reset (createMission = true) {
     this.#currentMission = null;
 
     this.#missions = [];

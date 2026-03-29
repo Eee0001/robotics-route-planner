@@ -76,7 +76,7 @@ body {
   border: 2px solid #303030;
 
   font-family: "Courier New", Courier, monospace;
-  font-size: 2.5vh;
+  font-size: 2.5vmin;
   color: #606060;
   font-weight: bold;
 
@@ -90,8 +90,16 @@ body {
 /*------------------------------------------------------------------------------*/
 /*------------------------------------------------------------------------------*/
 
+.active {
+  background-color: #202020 !important;
+}
+
+/*------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------*/
+
 .tab-action-btn {
   display: flex;
+  flex-shrink: 0;
 
   justify-content: center;
   align-items: center;

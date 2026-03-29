@@ -9,6 +9,7 @@
 function initInputEvents (mouse, keyboard, missionManager) {
 
   mouse.onMouseUp = (e) => {
+    if (!missionManager.currentRoute) return;
     missionManager.currentRoute.holdingPoint = null;
   };
 
@@ -16,6 +17,8 @@ function initInputEvents (mouse, keyboard, missionManager) {
 
   mouse.onMouseDown = (e) => {
     const route = missionManager.currentRoute;
+
+    if (!route) return;
     
     if (route.grabPoint(mouse.position)) return;
 
@@ -28,7 +31,7 @@ function initInputEvents (mouse, keyboard, missionManager) {
   mouse.onMouseMove = (e) => {
     const route = missionManager.currentRoute;
 
-    if (route.holdingPoint) {
+    if (route?.holdingPoint) {
       route.holdingPoint.x = mouse.x;
       route.holdingPoint.y = mouse.y;
     }
@@ -37,11 +40,11 @@ function initInputEvents (mouse, keyboard, missionManager) {
   //--------------------------------------
 
   keyboard.setKeyEvent("up", "Backspace", (e) => {
-    missionManager.currentRoute.deletePoint();
+    missionManager.currentRoute?.deletePoint();
   });
   
   keyboard.setKeyEvent("up", "Enter", (e) => {
-    missionManager.currentRoute.restorePoint();
+    missionManager.currentRoute?.restorePoint();
   });
   
   keyboard.setKeyEvent("up", "-", (e) => {
@@ -55,11 +58,11 @@ function initInputEvents (mouse, keyboard, missionManager) {
   });
   
   keyboard.setKeyEvent("up", "o", (e) => {
-    missionManager.currentSettings.toggleShowOverlay();
+    missionManager.currentSettings?.toggleShowOverlay();
   });
   
   keyboard.setKeyEvent("up", "i", (e) => {
-    missionManager.currentSettings.toggleShowInfo();
+    missionManager.currentSettings?.toggleShowInfo();
   });
   
   keyboard.setKeyEvent("up", "p", (e) => {
@@ -67,7 +70,7 @@ function initInputEvents (mouse, keyboard, missionManager) {
   });
   
   keyboard.setKeyEvent("up", "q", (e) => {
-    missionManager.currentRoute.reset();
+    missionManager.currentRoute?.reset();
   });
 
   keyboard.onKeyUp = (e) => {
@@ -79,19 +82,19 @@ function initInputEvents (mouse, keyboard, missionManager) {
   //--------------------------------------
 
   keyboard.setKeyEvent("down", "ArrowUp", (e) => {
-    missionManager.currentRoute.movePoint("up");
+    missionManager.currentRoute?.movePoint("up");
   });
   
   keyboard.setKeyEvent("down", "ArrowDown", (e) => {
-    missionManager.currentRoute.movePoint("down");
+    missionManager.currentRoute?.movePoint("down");
   });
   
   keyboard.setKeyEvent("down", "ArrowLeft", (e) => {
-    missionManager.currentRoute.movePoint("left");
+    missionManager.currentRoute?.movePoint("left");
   });
   
   keyboard.setKeyEvent("down", "ArrowRight", (e) => {
-    missionManager.currentRoute.movePoint("right");
+    missionManager.currentRoute?.movePoint("right");
   });
   
 }

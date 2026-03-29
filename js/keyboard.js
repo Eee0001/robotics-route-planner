@@ -38,9 +38,9 @@ class Keyboard {
   //--------------------------------------
 
   #initEvents () {
-    document.body.onkeyup = (e) => { this.#upEvent(e); };
+    document.body.onkeyup = (e)=>{ this.#upEvent(e); };
     
-    document.body.onkeydown = (e) => { this.#downEvent(e); };
+    document.body.onkeydown = (e)=>{ this.#downEvent(e); };
   }
 
   //--------------------------------------

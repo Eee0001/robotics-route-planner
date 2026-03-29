@@ -83,7 +83,7 @@ class Menu {
     }
 
     this.#elements.ImportM.onclick = ()=>{
-      loadFile(".json").then((file)=>{missionManager.uploadMission(file);});
+      loadFile(".json").then((file)=>{ missionManager.uploadMission(file); });
     }
 
     this.#elements["toggle-menu-btn"].onclick = ()=>{ 
