@@ -1,116 +1,82 @@
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // IMPORTS
-//------------------------------------------------------------
-import { Mission } from "./missions.js"
+//--------------------------------------------------------------------------------
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // CLASS
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 class MissionManager {
 
   constructor () {
     this._currentMission = null;
+    
     this._missions = [];
+    this._trash = [];
   }
 
-  //----------------------------------------------------------
+  //------------------------------------------------------------------------------
+
+  get currentMission () { return this._currentMission }
+  
+  get missions () { return this._missions }
+
+  //------------------------------------------------------------------------------
 
   createMission () {
     const mission = new Mission();
-    
     this._missions.push(mission);
 
-    this._currentMission = mission;
-    
+    this.selectMission(mission);
+
     return mission;
   }
 
-  //----------------------------------------------------------
+  //------------------------------------------------------------------------------
 
   deleteMission (mission) {
-    const index =  this._missions.indexOf(mission);
-    this._missions.splice(index, 1);
-
-    if (this._currentMission === mission) {
-      this._currentMission = null;
+    if (this._missions.length > 0) {
+      const index = this._missions.indexOf(mission);
+      this._missions.splice(index, 1);
+      
+      this._trash.push(mission);
+      
+      this.selectMission(this._missions[0]);
     }
   }
 
-  //----------------------------------------------------------
+  //------------------------------------------------------------------------------
+
+  restoreMission () {
+    if (this._trash.length > 0) {
+      this._missions.push(this._trash.pop());
+      
+      this.selectMission(this._missions[0]);
+    }
+  }
+
+  //------------------------------------------------------------------------------
+
+  reset () {
+    this._currentMission = null;
+    
+    this._missions = [];
+    this._trash = [];
+  }
+
+  //------------------------------------------------------------------------------
 
   selectMission (mission) {
-    this.currentMission = mission;
-  }
-
-  //----------------------------------------------------------
-
-  get missions () {
-    return this._missions;
-  }
-
-  set missions (missions) {
-    this._missions = missions;
-  }
-  
-  //----------------------------------------------------------
-  
-  get currentMission () {
-    return this._currentMission;
-  }
-
-  set currentMission (mission) {
     this._currentMission = mission;
-  }
-
-  //----------------------------------------------------------
-
-  get settings () {
-    return this.currentMission?.settings;
-  }
-
-  get route () {
-    return this.currentMission?.route;
-  }
-
-  get field () {
-    return this.currentMission?.field;
-  }
-
-  //----------------------------------------------------------
-
-  get points () {
-    return this.currentMission?.route?.points ?? [];
-  }
-
-  //----------------------------------------------------------
-
-  get currentPoint () {
-    return this.currentMission?.route?.currentPoint;
-  }
-
-  set currentPoint (point) {
-    if (this.currentMission?.route !== null) {
-      this.currentMission.route.currentPoint = point;
-    }
-  }
-
-  //----------------------------------------------------------
-
-  get holdingPoint () {
-    return this.currentMission?.route?.holdingPoint;
-  }
-
-  set holdingPoint (point) {
-    if (this.currentMission?.route !== null) {
-      this.currentMission.route.holdingPoint = point;
-    }
   }
   
 }
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
+// EXPORTS
+//--------------------------------------------------------------------------------
 
-export const missionManager = new MissionManager();
+const missionManager = new MissionManager();
+missionManager.createMission();
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------

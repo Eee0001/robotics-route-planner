@@ -1,101 +1,84 @@
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // IMPORTS
-//------------------------------------------------------------
-import { missionManager } from "./manager.js"
-import { canvas } from "./canvas.js"
-import { getDistance } from "./math.js"
-import { menu } from "./menu.js"
+//--------------------------------------------------------------------------------
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // CLASS
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
 class Mouse {
 
   constructor () {
-    this._position = {x: 0, y: 0};
+    this._scale = 1;
+    
+    this._x = 0;
+    this._y = 0;
+
+    this._onMouseMove = null;
+    this._onMouseUp = null;
+    this._onMouseDown = null;
+
+    this.initEvents();
   }
 
-  //----------------------------------------------------------
+  //------------------------------------------------------------------------------
+
+  get position () { return { x: this._x, y: this._y }; }
+  
+  get x () { return this._x; }
+  set x (x) { this._x = x / this._scale; }
+
+  get y () { return this._y; }
+  set y (y) { this._y = y / this._scale; }
+
+  set scale (scale) { this._scale = scale; }
+  
+  set onMouseUp (func) { this._onMouseUp = func; }
+  set onMouseDown (func) { this._onMouseDown = func; }
+  set onMouseMove (func) { this._onMouseMove = func; }
+  
+  //------------------------------------------------------------------------------
 
   initEvents () {
-    canvas.element.onmousemove = (e)=>{this.mouseMove(e);};
+    document.body.onmouseup = (e) => {
+      this.mouseUp(e);
+    };
+    document.getElementById("canvas").onmousedown = (e) => {
+      this.mouseDown(e);
+    };
+    document.getElementById("canvas").onmousemove = (e) => {
+      this.mouseMove(e);
+    };
     
-    document.body.onmouseup = ()=>{this.mouseUp();};
+  }
+
+  //------------------------------------------------------------------------------
+
+  mouseUp (event) {
+    if (this._onMouseUp) { this._onMouseUp(event); }
+  }
+
+  //------------------------------------------------------------------------------
+
+  mouseDown (event) {
+    if (this._onMouseDown) { this._onMouseDown(event); }
+  }
+
+  //------------------------------------------------------------------------------
+
+  mouseMove (event, route) {
+    this.x = event.offsetX;
+    this.y = event.offsetY;
     
-    canvas.element.onmousedown = ()=>{this.mouseDown();};
-  }
-
-  //----------------------------------------------------------
-
-  mouseMove (event) {
-    this._position.x = Math.round(event.offsetX / canvas.scale);
-    this._position.y = Math.round(event.offsetY / canvas.scale);
-
-    if (missionManager.holdingPoint !== null) {
-      missionManager.holdingPoint.x = this._position.x;
-      missionManager.holdingPoint.y = this._position.y;
-    }
-  }
-
-  //----------------------------------------------------------
-
-  mouseUp () {
-    if (missionManager.holdingPoint !== null) {
-      missionManager.holdingPoint = null;
-    }
-  }
-
-  //----------------------------------------------------------
-
-  mouseDown () {
-    for (let point of missionManager.points) {
-      if (getDistance(point, this._position) <= 25) {
-        missionManager.currentPoint = point;
-        missionManager.holdingPoint = point;
-      }
-    }
-
-    if (missionManager.holdingPoint === null) {
-      let point = missionManager.route.createPoint(this._position.x, this._position.y);
-
-      missionManager.currentPoint = point;
-      missionManager.holdingPoint = point;
-    }
-    
-    menu.refresh();
-  }
-
-  //----------------------------------------------------------
-
-  get position () {
-    return this._position;
-  }
-
-  //----------------------------------------------------------
-  
-  get x () {
-    return this._position.x;
-  }
-
-  set x (x) {
-    this._position.x = x;
-  }
-
-  //----------------------------------------------------------
-
-  get y () {
-    return this._y;
-  }
-
-  set y (y) {
-    this._position.y = y / canvas.scale;
+    if (this._onMouseMove) { this._onMouseMove(event); }
   }
   
 }
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
+// EXPORTS
+//--------------------------------------------------------------------------------
 
-export const mouse = new Mouse();
+const mouse = new Mouse();
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------

@@ -1,153 +1,93 @@
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // IMPORTS
-//------------------------------------------------------------
-import { missionManager } from "./manager.js"
-import { canvas } from "./canvas.js"
-import { getAngle, flipAngle, getTurn, getDistance } from "./math.js"
+//--------------------------------------------------------------------------------
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // METHODS
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
-export function drawPoints (points = missionManager.points, canvas2 = canvas) {  
-  for (let point of points) {
-    canvas2.drawPoint(point.x, point.y, 10, "#000000");
+function drawPoints (canvas, route) {
+  for (let point of route.points) {
+    canvas.drawPoint(point.x, point.y, 10, "#000000", "fill");
   }
 }
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
-export function drawSelect (point = missionManager.currentPoint, canvas2 = canvas) {  
-  if (point !== null) {
-    canvas2.drawPoint(point.x, point.y, 20, "#000000", "stroke");
+function drawLines (canvas, route) {
+  canvas.drawLine(route.points, "#000000", 3);
+}
+
+//--------------------------------------------------------------------------------
+
+function drawSelect (canvas, route) {
+  const point = route.currentPoint;
+
+  if (point) {
+    canvas.drawPoint(point.x, point.y, 20, "#000000", "stroke");
   }
 }
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
-export function drawLines (points = missionManager.points, canvas2 = canvas) {
-  canvas2.drawLine(points, "#000000");
-}
-
-//------------------------------------------------------------
-
-export function drawAngles (settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
+function drawInfo (canvas, route, settings) {
   if (settings.showInfo) {
-    for (let i = 0; i < points.length - 1; i++) {
+    for (let i = 0; i < route.points.length - 1; i++) {
 
-      let thisPoint = points[i];
-      let nextPoint = points[i + 1];
+      const lastPoint = route.points[i - 1];
+      const thisPoint = route.points[i];
+      const nextPoint = route.points[i + 1];
 
-      let angle = getAngle(thisPoint, nextPoint);
+      const middleX = (thisPoint.x + nextPoint.x) / 2;
+      const middleY = (thisPoint.y + nextPoint.y) / 2;
 
-      if (thisPoint.d === -1) {
-        angle = flipAngle(angle);
-      }
-      
-      angle = Math.round(angle);
+      let lastAngle = route.startingAngle;
 
-      let x = thisPoint.x;
-      let y = thisPoint.y - 24;
-
-      canvas2.drawText(angle, x, y, "#ff00ff");
-      
-    }
-  }
-}
-
-//------------------------------------------------------------
-
-export function drawTurns (settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
-  if (settings.showInfo) {
-    for (let i = 0; i < points.length - 1; i++) {
-
-      let thisPoint = points[i];
-      let nextPoint = points[i + 1];
-
-      let thisAngle = getAngle(thisPoint, nextPoint);
-
-      if (thisPoint.d === -1) {
-        thisAngle = flipAngle(thisAngle);
-      }
-
-      let lastAngle = settings.startingAngle;
-
-      if (i > 0) {
-        let lastPoint = points[i - 1];
+      if (lastPoint) {
         lastAngle = getAngle(lastPoint, thisPoint);
 
         if (lastPoint.d === -1) {
           lastAngle = flipAngle(lastAngle);
         }
       }
-
-      let turn = getTurn(lastAngle, thisAngle);
-
-      let x = thisPoint.x + 36;
-      let y = thisPoint.y + 12;
       
-      canvas2.drawText(turn, x, y, "#0000ff");
-      
-    }
-  }
-}
+      let thisAngle = getAngle(thisPoint, nextPoint);
 
-//------------------------------------------------------------
+      if (thisPoint.d === -1) {
+        thisAngle = flipAngle(thisAngle);
+      }
 
-export function drawDistances (settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
-  if (settings.showInfo) {
-    for (let i = 0; i < points.length - 1; i++) {
+      const angle = Math.round(thisAngle);
+      canvas.drawText(angle, thisPoint.x, thisPoint.y - 30, "#ff00ff");
 
-      let thisPoint = points[i];
-      let nextPoint = points[i + 1];
+      const turn = getTurn(lastAngle, thisAngle);
+      canvas.drawText(turn, thisPoint.x + 30, thisPoint.y, "#0000ff");
 
-      let distance = Math.round(getDistance(thisPoint, nextPoint));
+      const distance = Math.round(getDistance(thisPoint, nextPoint));
+      canvas.drawText(distance, middleX, middleY, "#ffff00");
 
-      let x = (thisPoint.x + nextPoint.x) / 2;
-      let y = (thisPoint.y + nextPoint.y) / 2;
+      const direction = thisPoint.d;
+      canvas.drawText(direction, thisPoint.x - 30, thisPoint.y, "#ff0000");
 
-      canvas2.drawText(distance, x, y, "#ffff00");
+      const action = thisPoint.a;
+      canvas.drawText(action, thisPoint.x, thisPoint.y + 30, "#00ff00");
       
     }
   }
 }
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 
-export function drawDirections (settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
-  if (settings.showInfo) {
-    for (let point of points) {
-
-      let x = point.x - 36;
-      let y = point.y + 12;
-
-      canvas2.drawText(point.d, x, y, "#ff0000");
-      
-    }
-  }
-}
-
-//------------------------------------------------------------
-
-export function drawFunctions (settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
-  if (settings.showInfo) {
-    for (let point of points) {
-
-      let x = point.x;
-      let y = point.y + 48;
-
-      canvas2.drawText(point.f, x, y, "#00ff00");
-      
-    }
-  }
-}
-
-//------------------------------------------------------------
-
-export function drawOverlay (settings = missionManager.settings, points = missionManager.points, canvas2 = canvas) {
+function drawOverlay (canvas, route, settings) {
   if (settings.showOverlay) {
-    canvas2.drawLine(points, "#00000080", settings.robotWidth);
+    canvas.drawLine(route.points, "#00000088", settings.robotWidth);
   }
 }
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
+
+function drawField (canvas, field) {
+  canvas.drawImage(field.image, 0, 0, field.width, field.height);
+}
+
+//--------------------------------------------------------------------------------

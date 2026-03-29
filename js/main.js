@@ -1,47 +1,80 @@
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // IMPORTS
-//------------------------------------------------------------
-import './css/styles.css'
-import { drawPoints, drawSelect, drawLines, drawAngles, drawTurns, drawDistances, drawDirections, drawFunctions, drawOverlay } from "./display.js"
-import { missionManager } from "./manager.js"
-import { canvas } from "./canvas.js"
-import { mouse } from "./mouse.js"
-import { menu } from "./menu.js"
-import { keyboard } from "./keyboard.js"
+//--------------------------------------------------------------------------------
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
 // INIT
-//------------------------------------------------------------
-console.log(missionManager.createMission());
-menu.initEvents();
-mouse.initEvents();
-keyboard.initEvents();
+//--------------------------------------------------------------------------------
+const BUTTON = document.getElementById("button");
+const MENU = document.getElementById("menu");
 
-document.getElementById("button").addEventListener("click", () => {
-  document.getElementById("menu").classList.toggle("hidden"); canvas.resize();
-});
+BUTTON.onclick = ()=>{ MENU.classList.toggle("hidden"); };
 
-//------------------------------------------------------------
-// LOOP
-//------------------------------------------------------------
-function loop () {
-  canvas.resize();
+//--------------------------------------------------------------------------------
 
-  // console.log(missionManager);
+mouse.onMouseUp = (event) => {
+  const route = missionManager.currentMission.route;
+  route.holdingPoint = null;
+}
+
+//--------------------------------------------------------------------------------
+
+mouse.onMouseDown = (event) => {
+  const route = missionManager.currentMission.route;
   
-  drawPoints();
-  drawSelect();
-  drawLines();
-  drawAngles();
-  drawTurns();
-  drawDistances();
-  drawDirections();
-  drawFunctions();
-  drawOverlay();
+  for (let point of route.points) {
+    if (getDistance(point, mouse.position) <= 25) {
+      route.currentPoint = point;
+      route.holdingPoint = point;
+    }
+  }
+  if (!route.holdingPoint) {
+    const point = route.createPoint(mouse.x, mouse.y);
+
+    route.currentPoint = point;
+    route.holdingPoint = point;
+  }
 }
 
-document.body.onload = () => {
-  setInterval(loop, 1000/60);
+//--------------------------------------------------------------------------------
+
+mouse.onMouseMove = (event) => {
+  const route = missionManager.currentMission.route;
+  
+  if (route.holdingPoint) {
+    route.holdingPoint.x = mouse.x;
+    route.holdingPoint.y = mouse.y;
+  }
 }
 
-//------------------------------------------------------------
+//--------------------------------------------------------------------------------
+
+keyboard.onKeyUp = (event)=>{
+  
+}
+
+//--------------------------------------------------------------------------------
+
+// keyboard.setKeyEventUp("w", (e)=>{});
+// keyboard.setKeyEventDown("ArrowLeft", (e)=>{});
+
+//--------------------------------------------------------------------------------
+// LOOP
+//--------------------------------------------------------------------------------
+function loop () {
+  canvas.resize(); 
+  mouse.scale = canvas.scale;
+
+  const currentMission = missionManager.currentMission;
+  
+  drawField(canvas, currentMission.field);
+
+  drawPoints(canvas, currentMission.route);
+  drawLines(canvas, currentMission.route);
+  drawSelect(canvas, currentMission.route);
+
+  drawInfo(canvas, currentMission.route, currentMission.settings);
+  drawOverlay(canvas, currentMission.route, currentMission.settings);
+}
+
+document.body.onload = ()=>{ setInterval(loop, 20); };

@@ -1,0 +1,177 @@
+/*----------------------------------------*/
+/*----------------------------------------*/
+
+body {
+  position: absolute;
+  
+  display:flex;
+  flex-wrap: wrap;
+  
+  margin: 0px;
+  padding: 0px;
+  
+  width: 100vw;
+  height: 100vh;
+
+  overflow: hidden;
+
+  user-select: none;
+
+  background-color: #101010;
+}
+
+/*----------------------------------------*/
+/*----------------------------------------*/
+
+#tablist {
+  position: relative;
+
+  display: block;
+
+  width: 100vw;
+  height: 5vh;
+
+  border: 1px solid #303030;
+  box-sizing: border-box;
+
+  background-color: #101010;
+}
+
+/*----------------------------------------*/
+/*----------------------------------------*/
+
+#viewport {
+  position: relative;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  flex-grow: 1;
+  height: 95vh;
+
+  border: 1px solid #303030;
+  box-sizing: border-box;
+
+  background-color: #101010;
+}
+
+#canvas {
+  position: absolute;
+
+  display: block;
+
+  background-color: #202020;
+}
+
+/*----------------------------------------*/
+/*----------------------------------------*/
+
+#menu {
+  position: relative;
+
+  display: block;
+
+  padding-top: 2vh;
+  line-height: 7.5vh;
+  
+  width: 30vw;
+  height: 95vh;
+
+  border: 1px solid #303030;
+  box-sizing: border-box;
+
+  white-space: nowrap;
+  overflow: hidden;
+
+  background-color: #202020;
+
+  flex: 0 1 30%;
+
+  transition: flex 0.25s ease-in;
+}
+
+.hidden {
+  flex: 0 1 0% !important;
+}
+/*----------------------------------------*/
+/*----------------------------------------*/
+
+#button {
+  position: absolute;
+
+  top: 1vmin;
+  right: 1vmin;
+
+  display: block;
+
+  width: 5vmin;
+  height: 5vmin;
+
+  border: 1px solid #303030;
+  box-sizing: border-box;
+
+  background-color: #101010;
+}
+
+#button:hover {
+  background-color: #202020;
+}
+
+/*----------------------------------------*/
+/*----------------------------------------*/
+
+label {  
+  font: 1vw "Courier New", Courier, monospace;
+  color: #606060;
+
+  margin-left: 3.5vw;
+
+  white-space: pre;
+}
+
+input[type="number"] {
+  font: 1vw "Courier New", Courier, monospace;
+
+  margin-left: 2vw;
+
+  width: 8vw;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  opacity: 1;
+}
+
+select {
+  font: 1vw "Courier New", Courier, monospace;
+
+  margin-left: 2vw;
+
+  width: 8vw;
+}
+
+input[type="checkbox"] {  
+  margin-left: 2vw;
+  
+  vertical-align: middle;
+
+  width: 16px;
+  height: 16px;
+}
+
+input[type="button"] {
+  font: 1vw "Courier New", Courier, monospace;
+
+  margin-left: 2vw;
+
+  width: 8vw;
+}
+
+hr {
+  margin: 2vh 2vw;
+  border: 1px solid #303030;
+}
+
+/*----------------------------------------*/
+/*----------------------------------------*/
