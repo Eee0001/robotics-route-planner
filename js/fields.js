@@ -12,7 +12,7 @@ class Field {
 
   constructor () {
     this.#image = new Image();
-    this.#src = "mission.png";
+    this.#src = "mission1.png";
 
     this.#image.src = this.#src;
 
