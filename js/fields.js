@@ -67,9 +67,10 @@ class Field {
     this.#width = data.width;
     this.#height = data.height;
 
-    this.#loaded = false;
-
-    this.#src = data.src;
+    this.#loaded = false; 
+    
+    this.#src = data.src === "mission.png" ? "mission1.png" : data.src;
+    
     this.#image.src = this.#src;
   }
   
