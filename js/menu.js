@@ -105,7 +105,12 @@ class Menu {
       const data = dataTarget[dataKey.property];
 
       if (this.#previousData[id] !== data) {
-        this.#elements[id].value = this.#previousData[id] = data;
+        if (this.#elements[id].type === "checkbox") {
+          this.#elements[id].checked = this.#previousData[id] = data;
+        }
+        else {
+          this.#elements[id].value = this.#previousData[id] = data;
+        }
       }
       
     }
