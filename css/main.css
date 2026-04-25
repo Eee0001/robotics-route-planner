@@ -205,7 +205,7 @@ canvas {
   position: relative;
 
   display: grid;
-  grid-template-rows: repeat(13, 1fr);
+  grid-template-rows: repeat(17, 1fr);
 
   align-items: center;
 
