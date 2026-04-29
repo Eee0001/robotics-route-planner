@@ -69,7 +69,9 @@ class Field {
     
     this.#loaded = false;
     
-    this.#image.src = dataURL;
+    this.#src = dataURL;
+    
+    this.#image.src = this.#src;
   }
   
   //--------------------------------------
@@ -87,7 +89,7 @@ class Field {
 
     this.#loaded = false; 
     
-    this.#src = data.src === "mission.png" ? "mission1.png" : data.src;
+    this.#src = data.src;
     
     this.#image.src = this.#src;
   }
