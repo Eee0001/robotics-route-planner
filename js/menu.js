@@ -13,7 +13,8 @@ class Menu {
   constructor () {
     this.#ids = [
       "menu", "toggle-menu-btn", "PointX", "PointY", "PointD", "PointA", 
-      "RobotA", "RobotW", "ShowI", "ShowO","ExportR", "ExportM", "ImportM"
+      "RobotA", "RobotW", "ShowI", "ShowO","ExportR", "ExportM", "ImportM",
+      "ImportF", "FieldW", "FieldH"
     ];
 
     this.#elements = {};
@@ -32,7 +33,10 @@ class Menu {
       RobotW: { target: "config", property: "robotWidth" },
 
       ShowI: { target: "settings", property: "showInfo" },
-      ShowO: { target: "settings", property: "showOverlay" }
+      ShowO: { target: "settings", property: "showOverlay" },
+      
+      FieldW: { target: "field", property: "width" },
+      FieldH: { target: "field", property: "height" }
     };
 
     this.#previousData = {};
@@ -44,7 +48,8 @@ class Menu {
     return {
       point: missionManager.currentRoute?.currentPoint,
       config: missionManager.currentConfig,
-      settings: missionManager.currentSettings
+      settings: missionManager.currentSettings,
+      field: missionManager.currentField
     };
   }
 
@@ -84,6 +89,10 @@ class Menu {
 
     this.#elements.ImportM.onclick = ()=>{
       loadFile(".json").then((file)=>{ missionManager.uploadMission(file); });
+    }
+    
+    this.#elements.ImportF.onclick = ()=>{
+      loadFile(".png").then((file)=>{ missionManager.uploadField(file); });
     }
 
     this.#elements["toggle-menu-btn"].onclick = ()=>{ 

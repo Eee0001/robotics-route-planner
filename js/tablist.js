@@ -15,12 +15,11 @@ class Tablist {
 
     this.#tabs = [];
 
-    this.#ids = ["tabElement", "nameElement", "fieldElement", "deleteElement"];
+    this.#ids = ["tabElement", "nameElement", "deleteElement"];
 
     this.#eventKeys = {
       tabElement: { target: "selectMission", type: "onclick", after: "selectTab" },
       nameElement: { target: "changeMissionName", type: "ondblclick", after: "renameTab" },
-      fieldElement: { target: "changeMissionField", type: "onclick" },
       deleteElement: { target: "deleteMission", type: "onclick", after: "deleteTab" }
     };
 

@@ -31,8 +31,10 @@ class Field {
   get src () { return this.#src; }
 
   get width () { return this.#width; }
+  set width (width) { this.#width = width; }
 
   get height () { return this.#height; }
+  set height (height) { this.#height = height; }
 
   get loaded () { return this.#loaded; }
 
@@ -45,6 +47,9 @@ class Field {
   //--------------------------------------
 
   #loadEvent () { 
+    this.#width ??= this.#image.naturalWidth;
+    this.#height ??= this.#image.naturalHeight;
+    
     this.#loaded = true;
   }
 
@@ -54,6 +59,21 @@ class Field {
     return serializeObject(this, ["src","width","height"]);
   }
 
+  //--------------------------------------
+  
+  loadRaw (dataURL) {
+    if (!dataURL) return;
+    
+    this.#width = null;
+    this.#height = null;
+    
+    this.#loaded = false;
+    
+    this.#src = dataURL;
+    
+    this.#image.src = this.#src;
+  }
+  
   //--------------------------------------
 
   loadData (data) {
@@ -69,7 +89,7 @@ class Field {
 
     this.#loaded = false; 
     
-    this.#src = data.src === "mission.png" ? "mission1.png" : data.src;
+    this.#src = data.src;
     
     this.#image.src = this.#src;
   }

@@ -8,7 +8,7 @@
 
 class Tab {
 
-  #mission; #tabElement; #nameElement; #fieldElement; #deleteElement;
+  #mission; #tabElement; #nameElement; #deleteElement;
 
   constructor (mission) {
     this.#mission = mission;
@@ -21,12 +21,6 @@ class Tab {
     this.#nameElement.innerText = this.#mission.name;
 
     this.#tabElement.appendChild(this.#nameElement);
-
-    this.#fieldElement = document.createElement("div");
-    this.#fieldElement.classList.add("tab-action-btn");
-    this.#fieldElement.innerText = "⋮";
-
-    this.#tabElement.appendChild(this.#fieldElement);
 
     this.#deleteElement = document.createElement("div");
     this.#deleteElement.classList.add("tab-action-btn");
@@ -43,10 +37,7 @@ class Tab {
 
   get nameElement () { return this.#nameElement; }
 
-  get fieldElement () { return this.#fieldElement; }
-
   get deleteElement () { return this.#deleteElement; }
-
   
 }
 
