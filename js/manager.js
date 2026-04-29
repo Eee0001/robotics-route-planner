@@ -91,18 +91,15 @@ class MissionManager {
 
   //--------------------------------------
 
-  changeMissionField (mission) {
-    const field = prompt("Enter field name");
-    
-    if (!(field === "mission1" || field === "mission2")) return;
-    
-    mission.field.loadData({
-        src: field + ".png",
-        width: 2362,
-        height: 1143
+  uploadField (file) {
+    readFileContent(file, true).then((data) => {
+      try {
+        this.#currentMission.field?.loadRaw(data);
+      }
+      catch {
+        console.warn("Incomplete Field data loaded");
+      }
     });
-    
-    return mission.field;
   }
 
   //--------------------------------------

@@ -47,6 +47,9 @@ class Field {
   //--------------------------------------
 
   #loadEvent () { 
+    this.#width ??= this.#image.naturalWidth;
+    this.#height ??= this.#image.naturalHeight;
+    
     this.#loaded = true;
   }
 
@@ -56,6 +59,19 @@ class Field {
     return serializeObject(this, ["src","width","height"]);
   }
 
+  //--------------------------------------
+  
+  loadRaw (dataURL) {
+    if (!dataURL) return;
+    
+    this.#width = null;
+    this.#height = null;
+    
+    this.#loaded = false;
+    
+    this.#image.src = dataURL;
+  }
+  
   //--------------------------------------
 
   loadData (data) {
