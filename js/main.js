@@ -30,6 +30,9 @@ setInterval(() => {
 //--------------------------------------------------------------------------------
 
 function loop () {
+  canvas.width = missionManager.currentField.width;
+  canvas.height = missionManager.currentField.height;
+  
   canvas.resize(); 
   mouse.scale = canvas.scale;
   

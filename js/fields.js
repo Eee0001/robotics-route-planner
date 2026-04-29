@@ -31,8 +31,10 @@ class Field {
   get src () { return this.#src; }
 
   get width () { return this.#width; }
+  set width (width) { this.#width = width; }
 
   get height () { return this.#height; }
+  set height (height) { this.#height = height; }
 
   get loaded () { return this.#loaded; }
 
