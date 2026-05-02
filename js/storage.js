@@ -52,15 +52,20 @@ async function loadFile (type) {
 
 //--------------------------------------
 
-async function readFileContent (file) {
+async function readFileContent (file, url = false) {
   let fileReader = new FileReader();
 
   const data = await new Promise((resolve) => {
     fileReader.onload = () => {
       resolve(fileReader.result);
     };
-
-    fileReader.readAsText(file);
+    
+    if (url) {
+      fileReader.readAsDataURL(file);
+    }
+    else {
+      fileReader.readAsText(file);
+    }
   });
 
   return data;

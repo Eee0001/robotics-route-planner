@@ -25,14 +25,10 @@ class Canvas {
   //--------------------------------------
 
   get scale () { return this.#scale; }
-
-  //--------------------------------------
-
-  setDimensions (width, height) {
-    this.#width = width;
-    this.#height = height;
-    this.resize();
-  }
+  
+  set width (width) { this.#width = width; }
+  
+  set height (height) { this.#height = height; }
 
   //--------------------------------------
 
