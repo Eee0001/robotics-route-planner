@@ -92,7 +92,7 @@ class Menu {
     }
     
     this.#elements.ImportF.onclick = ()=>{
-      loadFile(".png").then((file)=>{ missionManager.uploadField(file); });
+      loadFile("image/*").then((file)=>{ missionManager.uploadField(file); });
     }
 
     this.#elements["toggle-menu-btn"].onclick = ()=>{ 
