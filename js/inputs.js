@@ -78,6 +78,14 @@ function initInputEvents (mouse, keyboard, missionManager) {
       missionManager.currentRoute.currentPoint.a = Number(e.key);
     }
   };
+  
+  keyboard.setKeyEvent("up", "{", (e) => {
+    missionManager.currentField?.loadPrevDefault();
+  });
+  
+  keyboard.setKeyEvent("up", "}", (e) => {
+    missionManager.currentField?.loadNextDefault();
+  });
 
   //--------------------------------------
 
