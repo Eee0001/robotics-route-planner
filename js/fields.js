@@ -9,8 +9,8 @@
 class Field {
 
   static #defaultFields = [
-    { src: "mission1.png", width: 2362, height: 1143 },
-    { src: "mission2.png", width: 2362, height: 1143 }
+    { src: "fields/mission1.png", width: 2362, height: 1143 },
+    { src: "fields/mission2.png", width: 2362, height: 1143 }
   ];
 
   #image; #src; #width; #height; #loaded; #DefaultIndex;

@@ -45,6 +45,8 @@ Use these quick keyboard commands to build and edit your routes much faster:
 | **= (Equals)** | Quickly set the selected point's direction to Forwards. |
 | **O** | Turn the robot size overlay graphics on or off. |
 | **I** | Turn the point information labels on or off. |
+| **{** | Cycle backwards through default field carousel. |
+| **}** | Cycle forwards through default field carousel. |
 
 ---
 
