@@ -8,18 +8,25 @@
 
 class Field {
 
-  #image; #src; #width; #height; #loaded;
+  static #defaultFields = [
+    { src: "fields/mission1.png", width: 2362, height: 1143 },
+    { src: "fields/mission2.png", width: 2362, height: 1143 }
+  ];
+
+  #image; #src; #width; #height; #loaded; #DefaultIndex;
 
   constructor () {
     this.#image = new Image();
-    this.#src = "mission1.png";
+    this.#src = Field.#defaultFields[0].src;
 
     this.#image.src = this.#src;
 
-    this.#width = 2362;
-    this.#height = 1143;
+    this.#width = Field.#defaultFields[0].width;
+    this.#height = Field.#defaultFields[0].height;
 
     this.#loaded = false;
+    
+    this.#DefaultIndex = 0;
 
     this.#initEvents();
   }
@@ -38,6 +45,20 @@ class Field {
 
   get loaded () { return this.#loaded; }
 
+  //--------------------------------------
+  
+  loadPrevDefault () {
+    this.#DefaultIndex = this.#DefaultIndex === 0 ? Field.#defaultFields.length - 1 : this.#DefaultIndex - 1;
+    this.loadData(Field.#defaultFields[this.#DefaultIndex]);
+  }
+  
+  //--------------------------------------
+  
+  loadNextDefault () {
+    this.#DefaultIndex = this.#DefaultIndex ===  Field.#defaultFields.length - 1 ? 0 : this.#DefaultIndex + 1;
+    this.loadData(Field.#defaultFields[this.#DefaultIndex]);
+  }
+  
   //--------------------------------------
 
   #initEvents () {
