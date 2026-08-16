@@ -6,18 +6,25 @@
 // CLASS
 //--------------------------------------------------------------------------------
 
+
+
 class Field {
+
+  static defaultFields = [
+    { src: "mission1.png", width: 2362, height: 1143 },
+    { src: "mission2.png", width: 2362, height: 1143 }
+  ];
 
   #image; #src; #width; #height; #loaded;
 
   constructor () {
     this.#image = new Image();
-    this.#src = "mission1.png";
+    this.#src = Field.defaultFields[0].src;
 
     this.#image.src = this.#src;
 
-    this.#width = 2362;
-    this.#height = 1143;
+    this.#width = Field.defaultFields[0].width;
+    this.#height = Field.defaultFields[0].height;
 
     this.#loaded = false;
 
